@@ -1,0 +1,6 @@
+= Neo4j from the JVM ecosystem.
+
+Examples of how to connect to Neo4j on the JVM, reading and writing data.
+
+The idea of this project is to show how to access the standard movie graph and create a web api for it on different platforms running on the JVM.
+
