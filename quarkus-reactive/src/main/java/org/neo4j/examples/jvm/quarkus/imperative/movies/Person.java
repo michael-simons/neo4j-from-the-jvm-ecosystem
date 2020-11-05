@@ -18,33 +18,44 @@
  */
 package org.neo4j.examples.jvm.quarkus.imperative.movies;
 
-import java.util.List;
-
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
 /**
  * @author Michael J. Simons
  */
-@RequestScoped
-@Path("/api/movies")
-public class MovieResource {
+public final class Person {
 
-	private final MovieRepository movieRepository;
+	private Long id;
 
-	@Inject
-	public MovieResource(MovieRepository movieRepository) {
-		this.movieRepository = movieRepository;
+	private final String name;
+
+	private Integer born;
+
+	private Person(Long id, String name, Integer born) {
+		this.id = id;
+		this.born = born;
+		this.name = name;
 	}
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Movie> getMovies() {
+	public Person(Integer born, String name) {
+		this(null, name, born);
+	}
 
-		return movieRepository.findAll();
+	Person withId(Long id) {
+		return this.id == id ? this : new Person(id, this.name, this.born);
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public Integer getBorn() {
+		return born;
+	}
+
+	public void setBorn(Integer born) {
+		this.born = born;
 	}
 }
