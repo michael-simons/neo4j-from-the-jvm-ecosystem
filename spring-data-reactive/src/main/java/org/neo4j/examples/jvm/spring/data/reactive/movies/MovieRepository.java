@@ -16,9 +16,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.neo4j.examples.jvm.spring.data.imperative.movies;
+package org.neo4j.examples.jvm.spring.data.reactive.movies;
 
-import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;
 
 /**

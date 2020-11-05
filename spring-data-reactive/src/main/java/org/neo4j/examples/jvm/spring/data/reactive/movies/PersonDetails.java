@@ -1,4 +1,4 @@
-package org.neo4j.examples.jvm.spring.data.imperative.movies;
+package org.neo4j.examples.jvm.spring.data.reactive.movies;
 
 import java.util.ArrayList;
 import java.util.Collections;

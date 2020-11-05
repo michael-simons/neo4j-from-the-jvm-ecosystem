@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.neo4j.examples.neo4j-from-the-jvm-ecoysystem</groupId>
-	<artifactId>spring-data-imperative</artifactId>
+	<artifactId>spring-data-reactive</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>spring-data-imperative</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Example how to connect to Neo4j and use the Spring Data Neo4j 6 in a reactive fashion.</description>
 
 	<properties>
 		<java.version>15</java.version>

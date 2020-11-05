@@ -1,8 +1,6 @@
-package org.neo4j.examples.jvm.spring.data.imperative.movies;
+package org.neo4j.examples.jvm.spring.data.reactive.movies;
 
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
