@@ -1,0 +1,17 @@
+[
+  {
+    "name": "org.neo4j.examples.jvm.helidon.se.reactive.movies.Actor",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.neo4j.examples.jvm.helidon.se.reactive.movies.Movie",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.neo4j.examples.jvm.helidon.se.reactive.movies.Person",
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  }
+]
