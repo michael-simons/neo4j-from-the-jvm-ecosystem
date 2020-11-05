@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.neo4j.examples.neo4j-from-the-jvm-ecoysystem</groupId>
 	<artifactId>spring-plain-imperative</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>spring-plain-imperative</name>
 	<description>Example how to connect to Neo4j and use the plain driver in an imperative fashion.</description>
 

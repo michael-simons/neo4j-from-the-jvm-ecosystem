@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>org.neo4j.examples.neo4j-from-the-jvm-ecoysystem</groupId>
 	<artifactId>spring-data-imperative</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>spring-data-imperative</name>
 	<description>Example how to connect to Neo4j and use the Spring Data Neo4j 6 in an imperative fashion.</description>
 
