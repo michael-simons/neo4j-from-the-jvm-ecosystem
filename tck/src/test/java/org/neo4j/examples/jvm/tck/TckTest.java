@@ -5,13 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.Driver;
@@ -37,29 +38,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Michael J. Simons
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class Tck {
+class TckTest {
 
-	private static List<String> readStatements(Resource script) {
-
-		List<String> newStatements = new ArrayList<>();
-		try (var scanner = new Scanner(script.getInputStream(), StandardCharsets.UTF_8).useDelimiter(";\r?\n")) {
-			while (scanner.hasNext()) {
-				String statement = scanner.next().trim().replaceAll(";$", "").trim();
-				if (statement.isEmpty()) {
-					continue;
-				}
-				newStatements.add(statement);
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		return Collections.unmodifiableList(newStatements);
-	}
-
-	@BeforeAll
-	static void prepareDatabase(@Autowired Driver driver, @Value("classpath:movies.cypher") Resource movies)
-		throws IOException {
+	@BeforeEach
+	void prepareDatabase(@Autowired Driver driver, @Value("classpath:movies.cypher") Resource movies) {
 
 		try (
 			var session = driver.session();
@@ -132,11 +114,12 @@ class Tck {
 		 * @return A web test client
 		 */
 		@Bean
-		WebTestClient webTestClient(ObjectMapper objectMapper) {
+		WebTestClient webTestClient(@Value("${host-under-test:localhost:8080}") String hostUnderTest, ObjectMapper objectMapper) {
 
 			return WebTestClient
 				.bindToServer()
-				.baseUrl("http://localhost:8080/api")
+				.baseUrl("http://%s/api".formatted(hostUnderTest))
+				.responseTimeout(Duration.ofSeconds(30)) // Hopefully high enough that the container under tests are up
 				.codecs(c -> {
 					c.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(objectMapper));
 					c.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(objectMapper));
@@ -144,4 +127,23 @@ class Tck {
 				.build();
 		}
 	}
+
+	private static List<String> readStatements(Resource script) {
+
+		List<String> newStatements = new ArrayList<>();
+		try (var scanner = new Scanner(script.getInputStream(), StandardCharsets.UTF_8).useDelimiter(";\r?\n")) {
+			while (scanner.hasNext()) {
+				String statement = scanner.next().trim().replaceAll(";$", "").trim();
+				if (statement.isEmpty()) {
+					continue;
+				}
+				newStatements.add(statement);
+			}
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+
+		return Collections.unmodifiableList(newStatements);
+	}
+
 }
