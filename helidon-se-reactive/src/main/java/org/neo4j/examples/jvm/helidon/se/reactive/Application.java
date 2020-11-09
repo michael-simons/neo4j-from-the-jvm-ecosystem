@@ -74,7 +74,7 @@ public final class Application {
 	private static Driver createNeo4jDriver(Config config) {
 		var username = config.get("neo4j.driver.authentication.username").as(String.class).get();
 		var password = config.get("neo4j.driver.authentication.password").as(String.class).get();
-		var uri = config.get("neo4j.driver.uri").as(URI.class).get();
+		var uri = config.get("neo4j.uri").as(URI.class).get();
 
 		return GraphDatabase.driver(uri, AuthTokens.basic(username, password));
 	}
