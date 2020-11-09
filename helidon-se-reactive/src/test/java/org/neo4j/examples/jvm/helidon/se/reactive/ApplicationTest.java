@@ -27,8 +27,6 @@ import org.testcontainers.containers.Neo4jContainer;
  */
 class ApplicationTest {
 
-	private static final JsonBuilderFactory JSON = Json.createBuilderFactory(Map.of());
-
 	private static Neo4jContainer neo4jContainer;
 
 	private static WebServer webServer;
