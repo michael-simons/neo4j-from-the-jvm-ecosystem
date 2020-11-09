@@ -16,12 +16,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.neo4j.examples.jvm.quarkus.imperative.movies;
+package org.neo4j.examples.jvm.quarkus.reactive.movies;
 
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,7 +28,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Value;
 import org.neo4j.driver.reactive.RxSession;
-import org.reactivestreams.FlowAdapters;
 
 /**
  * @author Michael J. Simons

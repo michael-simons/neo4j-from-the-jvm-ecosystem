@@ -1,4 +1,4 @@
-package org.neo4j.examples.jvm.quarkus.imperative.movies;
+package org.neo4j.examples.jvm.quarkus.reactive.movies;
 
 import java.util.ArrayList;
 import java.util.Collections;

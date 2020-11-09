@@ -1,4 +1,4 @@
-package org.neo4j.examples.jvm.quarkus.imperative;
+package org.neo4j.examples.jvm.quarkus.reactive;
 
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
