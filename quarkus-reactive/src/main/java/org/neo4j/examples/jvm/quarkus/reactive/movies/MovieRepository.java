@@ -52,7 +52,7 @@ public class MovieRepository {
 			})
 			.toMulti()
 			.flatMap(this::executeQuery)
-			.onTermination().invoke(() -> sessionHolder.get().close());
+			.onTermination().invoke(() -> Uni.createFrom().publisher(sessionHolder.get().close()).subscribe());
 	}
 
 	private Multi<Movie> executeQuery(RxSession rxSession) {
