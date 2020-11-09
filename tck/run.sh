@@ -16,8 +16,9 @@ java src/main/java/org/neo4j/examples/jvm/tck/util/BoltHandshaker.java localhost
 
 # Declare a string array with type
 declare -a projects=(
-  "quarkus-imperative"
-  "quarkus-reactive"
+  "micronaut-reactive"
+#  "quarkus-imperative"
+#  "quarkus-reactive"
 #  "spring-data-imperative"
 #  "spring-data-reactive"
 #  "spring-plain-imperative"
@@ -32,7 +33,13 @@ for underTest in "${projects[@]}"; do
   {
     printf "Testing $underTest\n"
 
-    if [[ $underTest = quarkus* ]]
+    if [[ $underTest = micronaut* ]]
+    then
+      (cd ../$underTest && ./mvnw clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
+      docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
+      EXPOSED_PORT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' underTest`
+
+    elif [[ $underTest = quarkus* ]]
     then
       (cd ../$underTest && ./mvnw clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
       docker run --name underTest --publish=8080 -e 'QUARKUS_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
