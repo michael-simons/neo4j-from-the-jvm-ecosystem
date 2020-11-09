@@ -46,7 +46,8 @@ public class MovieRepository {
 				  + "MATCH (m:Movie)\n"
 				  + "MATCH (m) <- [:DIRECTED] - (d:Person)\n"
 				  + "MATCH (m) <- [r:ACTED_IN] - (a:Person)\n"
-				  + "RETURN m, collect(d) AS directors, collect({name:a.name, roles: r.roles}) AS actors\n";
+				  + "RETURN m, collect(DISTINCT d) AS directors, collect(DISTINCT {name:a.name, roles: r.roles}) AS actors\n"
+				  + "ORDER BY m.name ASC";
 
 			return session.readTransaction(tx -> tx.run(query).list(r -> {
 				var movieNode = r.get("m").asNode();

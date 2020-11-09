@@ -44,7 +44,8 @@ final class MovieRepository {
 				MATCH (m:Movie)
 				MATCH (m) <- [:DIRECTED] - (d:Person)
 				MATCH (m) <- [r:ACTED_IN] - (a:Person)
-				RETURN m, collect(d) AS directors, collect({name:a.name, roles: r.roles}) AS actors
+				RETURN m, collect(DISTINCT d) AS directors, collect(DISTINCT {name:a.name, roles: r.roles}) AS actors
+				ORDER BY m.name ASC
 				""";
 
 			return session.readTransaction(tx -> tx.run(query).list(r -> {

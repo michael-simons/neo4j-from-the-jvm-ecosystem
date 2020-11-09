@@ -31,10 +31,12 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<!-- Required Neo4j dependencies. -->
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-neo4j</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-resteasy-jsonb</artifactId>

@@ -60,7 +60,8 @@ public class MovieRepository {
 					+ "match (m:Movie) "
 					+ "match (m) <- [:DIRECTED] - (d:Person) "
 					+ "match (m) <- [r:ACTED_IN] - (a:Person) "
-					+ "return m, collect(d) as directors, collect({name:a.name, roles: r.roles}) as actors";
+					+ "RETURN m, collect(DISTINCT d) AS directors, collect(DISTINCT {name:a.name, roles: r.roles}) AS actors\n"
+					+ "ORDER BY m.name ASC";
 
 		return Flowable
 			.fromPublisher(rxSession.readTransaction(tx -> tx.run(query).records()))

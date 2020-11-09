@@ -49,11 +49,14 @@ final class MovieRepository {
 	}
 
 	private Flux<Movie> executeQuery(RxSession rxSession) {
-		var query = ""
-					+ "match (m:Movie) "
-					+ "match (m) <- [:DIRECTED] - (d:Person) "
-					+ "match (m) <- [r:ACTED_IN] - (a:Person) "
-					+ "return m, collect(d) as directors, collect({name:a.name, roles: r.roles}) as actors";
+
+		var query = """
+				MATCH (m:Movie)
+				MATCH (m) <- [:DIRECTED] - (d:Person)
+				MATCH (m) <- [r:ACTED_IN] - (a:Person)
+				RETURN m, collect(DISTINCT d) AS directors, collect(DISTINCT {name:a.name, roles: r.roles}) AS actors
+				ORDER BY m.name ASC
+				""";
 
 		return Flux.from(rxSession.readTransaction(tx -> tx.run(query).records()))
 			.map(r -> {

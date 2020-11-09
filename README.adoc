@@ -4,3 +4,59 @@ Examples of how to connect to Neo4j on the JVM, reading and writing data.
 
 The idea of this project is to show how to access the standard movie graph and create a web api for it on different platforms running on the JVM.
 
+== Helidon SE
+
+Available as
+
+* helidon-se-reactive
+
+Run with
+
+[source,console]
+----
+mvn clean package
+java -jar target/helidon-se-reactive.jar 
+----
+
+== Micronaut
+
+Available as
+
+* micronaut-reactive
+
+Run with
+
+[source,console]
+----
+./mvnw mn:run
+----
+
+== Quarkus
+
+Available as
+
+* quarkus-imperative
+* quarkus-reactive
+
+All can be run with
+
+[source,console]
+----
+./mvnw quarkus:dev
+----
+
+== Spring
+
+Available as
+
+* spring-plain-imperative
+* spring-plain-reactive
+* spring-data-imperative
+* spring-data-reactive
+
+All can be run with
+
+[source,console]
+----
+./mvnw spring-boot:run
+----

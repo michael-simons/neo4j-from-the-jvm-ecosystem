@@ -20,8 +20,7 @@ import javax.json.bind.JsonbBuilder;
  */
 public final class SseJsonObjectBodyStreamWriter implements MessageBodyStreamWriter<Object> {
 
-	private static final MediaType TEXT_EVENT_STREAM_JSON = MediaType
-		.parse("text/event-stream;element-type=\"application/json\"");
+	private static final MediaType TEXT_EVENT_STREAM_JSON = MediaType.parse("text/event-stream");
 	private static final Jsonb JSON_FACTORY = JsonbBuilder.create();
 	private static final byte[] DATA = "data: ".getBytes(StandardCharsets.UTF_8);
 	private static final byte[] NL = "\n\n".getBytes(StandardCharsets.UTF_8);

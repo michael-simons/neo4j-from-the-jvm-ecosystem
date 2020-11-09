@@ -17,7 +17,7 @@
 	<properties>
 		<mainClass>org.neo4j.examples.jvm.helidon.se.reactive.Application</mainClass>
 		<neo4j-java-driver.version>4.1.1</neo4j-java-driver.version>
-		<neo4j.version>1.14.2</neo4j.version>
+		<neo4j.version>1.15.0</neo4j.version>
 	</properties>
 
 	<dependencies>

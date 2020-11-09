@@ -57,10 +57,11 @@ public class MovieRepository {
 
 	private Multi<Movie> executeQuery(RxSession rxSession) {
 		var query = ""
-					+ "match (m:Movie) "
-					+ "match (m) <- [:DIRECTED] - (d:Person) "
-					+ "match (m) <- [r:ACTED_IN] - (a:Person) "
-					+ "return m, collect(d) as directors, collect({name:a.name, roles: r.roles}) as actors";
+					+ "MATCH (m:Movie) "
+					+ "MATCH (m) <- [:DIRECTED] - (d:Person) "
+					+ "MATCH (m) <- [r:ACTED_IN] - (a:Person) "
+					+ "RETURN m, collect(DISTINCT d) AS directors, collect(DISTINCT {name:a.name, roles: r.roles}) AS actors "
+					+ "ORDER BY m.title ASC";
 
 		return Multi
 			.createFrom().publisher(rxSession.readTransaction(tx -> tx.run(query).records()))

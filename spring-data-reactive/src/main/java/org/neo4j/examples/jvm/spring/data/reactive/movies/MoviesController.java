@@ -2,6 +2,7 @@ package org.neo4j.examples.jvm.spring.data.reactive.movies;
 
 import reactor.core.publisher.Flux;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,6 @@ public final class MoviesController {
 
 	@GetMapping(value = { "", "/" }, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public Flux<Movie> get() {
-		return movieRepository.findAll();
+		return movieRepository.findAll(Sort.by("title").ascending());
 	}
 }

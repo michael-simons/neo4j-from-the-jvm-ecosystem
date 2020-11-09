@@ -16,31 +16,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.neo4j.examples.jvm.spring.plain.reactive.movies;
+package org.neo4j.examples.jvm.tck.movies;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import lombok.Builder;
+import lombok.Data;
+import lombok.With;
+
 import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author Michael J. Simons
  */
+@Data
+@Builder(builderClassName = "Builder", setterPrefix = "with")
+@JsonDeserialize(builder = Actor.Builder.class)
 public final class Actor {
 
 	private final String name;
 
 	private final List<String> roles;
-
-	public Actor(String name, final List<String> roles) {
-		this.name = name;
-		this.roles = new ArrayList<>(roles);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public List<String> getRoles() {
-		return Collections.unmodifiableList(roles);
-	}
 }

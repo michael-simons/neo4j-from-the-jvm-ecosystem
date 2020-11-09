@@ -8,34 +8,28 @@
 		<version>2.4.0-RC1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>org.neo4j.examples.neo4j_from_the_jvm_ecoysystem</groupId>
-	<artifactId>spring-plain-imperative</artifactId>
+	<groupId>org.neo4j.examples.neo4j_from_the_jvm_ecoysystemcom.example</groupId>
+	<artifactId>tck</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>spring-plain-imperative</name>
-	<description>Example how to connect to Neo4j and use the plain driver in an imperative fashion.</description>
+	<name>tck</name>
+	<description>Demo project for Spring Boot</description>
 
 	<properties>
 		<java.version>15</java.version>
 	</properties>
 
 	<dependencies>
-		<!-- Required Neo4j dependencies. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.neo4j.driver</groupId>
 			<artifactId>neo4j-java-driver</artifactId>
 		</dependency>
-
-		<!-- Imperative Web -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<!-- Development and test -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
 		<dependency>
@@ -43,7 +37,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+
 
 	<build>
 		<plugins>

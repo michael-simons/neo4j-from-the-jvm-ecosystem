@@ -27,24 +27,13 @@ import java.util.List;
  */
 public final class Actor {
 
-	private final Long id;
-
 	private final String name;
 
 	private final List<String> roles;
 
-	Actor(Long id, String name, final List<String> roles) {
-		this.id = id;
+	public Actor(String name, final List<String> roles) {
 		this.name = name;
 		this.roles = new ArrayList<>(roles);
-	}
-
-	public Actor(String name, final List<String> roles) {
-		this(-1L, name, roles);
-	}
-
-	public Actor withId(Long id) {
-		return this.id == id ? this : new Actor(id, this.name, this.roles);
 	}
 
 	public String getName() {
