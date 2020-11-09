@@ -1,0 +1,8 @@
+micronaut:
+  application:
+    name: micronautReactive
+neo4j:
+  username: neo4j
+  password: secret
+  uri: bolt://localhost:7687
+
