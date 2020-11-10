@@ -23,6 +23,8 @@ import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 /**
  * @author Michael J. Simons
  */
@@ -30,25 +32,22 @@ import org.springframework.data.neo4j.core.schema.Node;
 public final class Person {
 
 	@Id @GeneratedValue
-	private Long id;
+	private final Long id;
 
 	private final String name;
 
 	private Integer born;
 
+	@PersistenceConstructor
 	private Person(Long id, String name, Integer born) {
 		this.id = id;
 		this.born = born;
 		this.name = name;
 	}
 
-	@PersistenceConstructor
+	@JsonCreator
 	public Person(Integer born, String name) {
 		this(null, name, born);
-	}
-
-	private Person withId(Long id) {
-		return this.id == id ? this : new Person(id, this.name, this.born);
 	}
 
 	public Long getId() {
