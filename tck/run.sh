@@ -36,19 +36,16 @@ for underTest in "${projects[@]}"; do
     then
       (cd ../$underTest && mvn -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
       docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
-      EXPOSED_PORT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' underTest`
 
     elif [[ $underTest = micronaut* ]]
     then
       (cd ../$underTest && ./mvnw -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
       docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
-      EXPOSED_PORT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' underTest`
 
     elif [[ $underTest = quarkus* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
+      (cd ../$underTest && ./mvnw -DskipTests clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
       docker run --name underTest --publish=8080 -e 'QUARKUS_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
-      EXPOSED_PORT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' underTest`
 
     elif [[ $underTest = spring* ]]
     then
