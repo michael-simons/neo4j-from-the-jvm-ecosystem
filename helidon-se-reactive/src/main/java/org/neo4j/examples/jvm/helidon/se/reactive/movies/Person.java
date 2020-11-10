@@ -18,29 +18,29 @@
  */
 package org.neo4j.examples.jvm.helidon.se.reactive.movies;
 
+import javax.json.bind.annotation.JsonbCreator;
+import javax.json.bind.annotation.JsonbProperty;
+
 /**
  * @author Michael J. Simons
  */
 public final class Person {
 
-	private Long id;
+	private final Long id;
 
 	private final String name;
 
 	private Integer born;
 
-	private Person(Long id, String name, Integer born) {
+	Person(Long id, String name, Integer born) {
 		this.id = id;
 		this.born = born;
 		this.name = name;
 	}
 
-	public Person(Integer born, String name) {
+	@JsonbCreator
+	public Person(@JsonbProperty("name") String name, @JsonbProperty("born") Integer born) {
 		this(null, name, born);
-	}
-
-	Person withId(Long id) {
-		return this.id == id ? this : new Person(id, this.name, this.born);
 	}
 
 	public Long getId() {

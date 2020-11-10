@@ -18,12 +18,10 @@
  */
 package org.neo4j.examples.jvm.tck.movies;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.With;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
@@ -32,6 +30,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 @Data
 @Builder(builderClassName = "Builder", setterPrefix = "with")
 @JsonDeserialize(builder = Person.Builder.class)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public final class Person {
 
 	private final Long id;

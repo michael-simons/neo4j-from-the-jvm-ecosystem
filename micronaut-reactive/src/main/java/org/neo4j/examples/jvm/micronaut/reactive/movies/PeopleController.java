@@ -18,44 +18,30 @@
  */
 package org.neo4j.examples.jvm.micronaut.reactive.movies;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.http.HttpStatus;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Status;
+import io.reactivex.Single;
 
 /**
  * @author Michael J. Simons
  */
-public final class Person {
+@Controller("/api/people")
+public final class PeopleController {
 
-	private final Long id;
+	private final PeopleRepository peopleRepository;
 
-	private final String name;
-
-	private Integer born;
-
-	Person(Long id, String name, Integer born) {
-		this.id = id;
-		this.born = born;
-		this.name = name;
+	public PeopleController(PeopleRepository peopleRepository) {
+		this.peopleRepository = peopleRepository;
 	}
 
-	@JsonCreator
-	public Person(@JsonProperty("name") String name, @JsonProperty("born") Integer born) {
-		this(null, name, born);
-	}
+	@Post(produces = MediaType.APPLICATION_JSON)
+	@Status(HttpStatus.CREATED)
+	public Single<Person> createNewPerson(@Body Person newPersonCmd) {
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Integer getBorn() {
-		return born;
-	}
-
-	public void setBorn(Integer born) {
-		this.born = born;
+		return peopleRepository.save(newPersonCmd);
 	}
 }

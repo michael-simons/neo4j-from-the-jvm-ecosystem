@@ -18,44 +18,33 @@
  */
 package org.neo4j.examples.jvm.quarkus.reactive.movies;
 
-import javax.json.bind.annotation.JsonbCreator;
-import javax.json.bind.annotation.JsonbProperty;
+import io.smallrye.mutiny.Uni;
+
+import javax.enterprise.context.RequestScoped;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * @author Michael J. Simons
  */
-public final class Person {
+@RequestScoped
+@Path("/api/people")
+public class PeopleResource {
 
-	private final Long id;
+	private final PeopleRepository peopleRepository;
 
-	private final String name;
-
-	private Integer born;
-
-	Person(Long id, String name, Integer born) {
-		this.id = id;
-		this.born = born;
-		this.name = name;
+	public PeopleResource(PeopleRepository peopleRepository) {
+		this.peopleRepository = peopleRepository;
 	}
 
-	@JsonbCreator
-	public Person(@JsonbProperty("name") String name, @JsonbProperty("born") Integer born) {
-		this(null, name, born);
-	}
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<Response> createNewPerson(Person newPerson) {
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Integer getBorn() {
-		return born;
-	}
-
-	public void setBorn(Integer born) {
-		this.born = born;
+		var savedPerson = peopleRepository.save(newPerson);
+		return savedPerson.map(entity -> Response.status(Response.Status.CREATED).entity(entity).build());
 	}
 }

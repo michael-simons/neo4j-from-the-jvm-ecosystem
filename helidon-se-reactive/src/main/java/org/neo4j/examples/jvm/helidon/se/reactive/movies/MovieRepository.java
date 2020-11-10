@@ -18,6 +18,9 @@
  */
 package org.neo4j.examples.jvm.helidon.se.reactive.movies;
 
+import static org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleRepository.asPerson;
+import static org.reactivestreams.FlowAdapters.toFlowPublisher;
+
 import io.helidon.common.reactive.Multi;
 import io.helidon.common.reactive.Single;
 
@@ -49,8 +52,7 @@ public final class MovieRepository {
 				return Single.just(session);
 			})
 			.flatMap(this::executeQuery)
-			.onTerminate(() -> Single
-				.create(FlowAdapters.toFlowPublisher(sessionHolder.get().close()))
+			.onTerminate(() -> Single.create(toFlowPublisher(sessionHolder.get().close()))
 				.toOptionalSingle()
 				.subscribe(empty -> {}));
 	}
@@ -64,17 +66,12 @@ public final class MovieRepository {
 					+ "ORDER BY m.name ASC";
 
 		return Multi
-			.create(FlowAdapters.toFlowPublisher(rxSession.readTransaction(tx -> tx.run(query).records())))
+			.create(toFlowPublisher(rxSession.readTransaction(tx -> tx.run(query).records())))
 			.map(r -> {
 				var movieNode = r.get("m").asNode();
 
-				var directors = r.get("directors").asList(v -> {
-					var personNode = v.asNode();
-					return new Person(personNode.get("born").asInt(), personNode.get("name").asString());
-				});
-
-				var actors = r.get("actors")
-					.asList(v -> new Actor(v.get("name").asString(), v.get("roles").asList(Value::asString)));
+				var directors = r.get("directors").asList(v -> asPerson(v.asNode()));
+				var actors = r.get("actors").asList(v -> new Actor(v.get("name").asString(), v.get("roles").asList(Value::asString)));
 
 				var m = new Movie(movieNode.get("title").asString(), movieNode.get("tagline").asString());
 				m.setReleased(movieNode.get("released").asInt());

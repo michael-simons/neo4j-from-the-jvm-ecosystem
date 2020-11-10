@@ -15,6 +15,8 @@ import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieRepository;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieService;
+import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleRepository;
+import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleService;
 import org.neo4j.examples.jvm.helidon.se.reactive.support.SseJsonObjectBodyStreamWriter;
 
 /**
@@ -83,9 +85,11 @@ public final class Application {
 
 		var driver = createNeo4jDriver(config);
 		var movieService = new MovieService(new MovieRepository(driver));
+		var peopleService = new PeopleService(new PeopleRepository(driver));
 
 		return Routing.builder()
 			.register(movieService)
+			.register(peopleService)
 			.build();
 	}
 

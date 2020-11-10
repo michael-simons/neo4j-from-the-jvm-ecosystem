@@ -15,6 +15,100 @@ It will work with a good chance in Quarkus too.
 So in case you really want to have great Object Mapping but cannot decide to use Spring as a container, 
 you might want to try out the CDI extension.
 
+== Shared Api
+
+All projects provide the following API:
+
+=== `POST /api/people`
+
+[source,bash]
+.Example request
+----
+$ curl 'http://localhost:8080/api/people' -i -X POST \
+    -H 'Content-Type: application/json' \
+    -d '{"name":"Lieschen Müller","born":2020}'
+----
+
+[source,http,options="nowrap"]
+.Example response
+----
+HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Length: 64
+
+{
+  "born" : 2020,
+  "name" : "Lieschen Müller",
+  "id" : 339
+}
+----
+
+=== `GET /api/movies`
+
+[source,bash]
+.Example request
+----
+$ curl 'http://localhost:8080/api/movies' -i -X GET
+----
+
+[source,http,options="nowrap"]
+.Example response
+----
+HTTP/1.1 200 OK
+transfer-encoding: chunked
+Content-Type: text/event-stream;charset=UTF-8
+Content-Length: 1270
+
+[ {
+  "title" : "A Few Good Men",
+  "description" : "In the heart of the nation's capital, in a courthouse of the U.S. government, one man will stop at nothing to keep his honor, and one will stop at nothing to find the truth.",
+  "actors" : [ {
+    "roles" : [ "Capt. Jack Ross" ],
+    "name" : "Kevin Bacon"
+  }, {
+    "roles" : [ "Lt. Cdr. JoAnne Galloway" ],
+    "name" : "Demi Moore"
+  }, {
+    "roles" : [ "Man in Bar" ],
+    "name" : "Aaron Sorkin"
+  }, {
+    "roles" : [ "Lt. Col. Matthew Andrew Markinson" ],
+    "name" : "J.T. Walsh"
+  }, {
+    "roles" : [ "Lt. Jonathan Kendrick" ],
+    "name" : "Kiefer Sutherland"
+  }, {
+    "roles" : [ "Lt. Sam Weinberg" ],
+    "name" : "Kevin Pollak"
+  }, {
+    "roles" : [ "Cpl. Jeffrey Barnes" ],
+    "name" : "Noah Wyle"
+  }, {
+    "roles" : [ "Cpl. Carl Hammaker" ],
+    "name" : "Cuba Gooding Jr."
+  }, {
+    "roles" : [ "Dr. Stone" ],
+    "name" : "Christopher Guest"
+  }, {
+    "roles" : [ "Lt. Daniel Kaffee" ],
+    "name" : "Tom Cruise"
+  }, {
+    "roles" : [ "Col. Nathan R. Jessup" ],
+    "name" : "Jack Nicholson"
+  }, {
+    "roles" : [ "Pfc. Louden Downey" ],
+    "name" : "James Marshall"
+  } ],
+  "directors" : [ {
+    "born" : 1947,
+    "name" : "Rob Reiner",
+    "id" : 194
+  } ],
+  "released" : 1992
+} ]
+----
+
+
 == Helidon SE
 
 * ❌ Automatic setup of the Neo4j driver (A configuration framework hoever is provided)
@@ -163,7 +257,7 @@ quarkus.neo4j.authentication.password=secret
 # For your current system, GraalVM 11 is required
 ./mvnw clean package -Pnative
 # As a native docker image
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
 ----
 
 == Spring
@@ -227,4 +321,3 @@ cd tck
 
 It will bring up a Neo4j docker instance and take each project, build a docker image, start it and than executes a couple of requests against it.
 The script is tested currently only under macOS.
-The TCK uses native images when available and supporting dynamic properties.

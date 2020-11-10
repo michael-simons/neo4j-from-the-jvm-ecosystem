@@ -18,6 +18,8 @@
  */
 package org.neo4j.examples.jvm.spring.plain.reactive.movies;
 
+import static org.neo4j.examples.jvm.spring.plain.reactive.movies.PeopleRepository.asPerson;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -41,7 +43,7 @@ final class MovieRepository {
 		this.driver = driver;
 	}
 
-	public Flux<Movie> findAll() {
+	Flux<Movie> findAll() {
 
 		return Flux.using(driver::rxSession,
 				this::executeQuery,
@@ -62,13 +64,8 @@ final class MovieRepository {
 			.map(r -> {
 				var movieNode = r.get("m").asNode();
 
-				var directors = r.get("directors").asList(v -> {
-					var personNode = v.asNode();
-					return new Person(personNode.get("born").asInt(), personNode.get("name").asString());
-				});
-
-				var actors = r.get("actors")
-					.asList(v -> new Actor(v.get("name").asString(), v.get("roles").asList(Value::asString)));
+				var directors = r.get("directors").asList(v -> asPerson(v.asNode()));
+				var actors = r.get("actors").asList(v -> new Actor(v.get("name").asString(), v.get("roles").asList(Value::asString)));
 
 				var m = new Movie(movieNode.get("title").asString(), movieNode.get("tagline").asString());
 				m.setReleased(movieNode.get("released").asInt());

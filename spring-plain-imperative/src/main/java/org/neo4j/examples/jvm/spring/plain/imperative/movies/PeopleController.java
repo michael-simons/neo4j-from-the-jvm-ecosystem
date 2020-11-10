@@ -18,43 +18,30 @@
  */
 package org.neo4j.examples.jvm.spring.plain.imperative.movies;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Michael J. Simons
  */
-public final class Person {
+@RestController
+@RequestMapping("/api/people")
+public class PeopleController {
 
-	private final Long id;
+	private final PeopleRepository peopleRepository;
 
-	private final String name;
-
-	private Integer born;
-
-	Person(Long id, String name, Integer born) {
-		this.id = id;
-		this.born = born;
-		this.name = name;
+	public PeopleController(PeopleRepository peopleRepository) {
+		this.peopleRepository = peopleRepository;
 	}
 
-	@JsonCreator
-	public Person(String name, Integer born) {
-		this(null, name, born);
-	}
+	@PostMapping
+	@ResponseStatus(value = HttpStatus.CREATED)
+	Person createNewPerson(@RequestBody Person person) {
 
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public Integer getBorn() {
-		return born;
-	}
-
-	public void setBorn(Integer born) {
-		this.born = born;
+		return peopleRepository.save(person);
 	}
 }
