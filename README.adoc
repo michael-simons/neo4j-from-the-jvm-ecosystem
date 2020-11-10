@@ -4,11 +4,26 @@ Examples of how to connect to Neo4j on the JVM, reading and writing data.
 
 The idea of this project is to show how to access the standard movie graph and create a web api for it on different platforms running on the JVM.
 
+All projects have been created either via their official "starter" services or Maven archetypes. 
+
+NOTE: The order in which the frameworks is alphabetical and doesn't represent any preference.
+      As I prefer Maven, I chose to create all projects as Maven projects.
+
 == Helidon SE
 
-Available as
+* ❌ Automatic setup of the Neo4j driver (A configuration framework hoever is provided)
+* ❌ Officially supported Data Mapping framework available
+* ❌ Built-in dev-mode with reload / restart feature
+* ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
+* ✅ Reactive Streams: Helidon's own implementation
+* ⚠️ GraalVM native compilation (Via a dedicated Docker file)
+
+Demo projects provided:
 
 * helidon-se-reactive
+
+Created via `mvn -U archetype:generate -DinteractiveMode=false -DarchetypeGroupId=io.helidon.archetypes-DarchetypeArtifactId=helidon-quickstart-se -DarchetypeVersion=2.1.0`,
+version tested *2.1.0*.
 
 Run with
 
@@ -18,45 +33,192 @@ mvn clean package
 java -jar target/helidon-se-reactive.jar 
 ----
 
+=== Create docker images
+
+Two steps required, a `Dockerfile` is provided.
+
+[source,console]
+----
+mvn clean package
+docker build .
+----
+
+=== Create native images
+
+----
+# For your current system, GraalVM 11 is required
+mvn clean package -Pnative-image
+# As a native docker image
+mvn clean package
+docker build -f Dockerfile.native .
+----
+
+WARNING: Stuff that requires reflection, for example the JSONB support, needs special attention via `reflect-config.json` (Compare https://info.michael-simons.eu/2020/09/15/about-the-tooling-available-to-create-native-graalvm-images/["About the tooling available to create native graalvm images"]).
+         Also configuration properties are built into the image and not overwritten by environment variables.
+
+
 == Micronaut
 
-Available as
+* ✅ Automatic setup of the Neo4j driver
+* ⚠️ Officially supported Data Mapping framework available (GORM, in beta for Neo4j), SDN 6 might work as well
+* ✅ Built-in dev-mode with reload / restart feature
+* ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
+* ✅ Reactive Streams: https://github.com/ReactiveX/RxJava[RxJava2 and 3]
+* ⚠️ GraalVM native compilation (Without additional setup only for Gradle.)
+
+Demo projects provided:
 
 * micronaut-reactive
 
-Run with
+Created via: https://micronaut.io/launch/, version tested *2.1.3*.
+
+=== Configuration of the Neo4j Java Driver
+
+Support of the some 4.0.x config options under the namespace `neo4j.*`
+Basic setup:
+
+[source,yaml]
+----
+neo4j:
+  username: neo4j
+  password: secret
+  uri: bolt://localhost:7687
+----
+
+=== Running
 
 [source,console]
 ----
 ./mvnw mn:run
 ----
 
+=== Create docker images
+
+Two steps required, a `Dockerfile` is provided.
+
+[source,console]
+----
+./mvnw clean package
+docker build .
+----
+
+=== Create native images
+
+Additional setup or Gradle is required.
+
 == Quarkus
 
-Available as
+* ✅ Automatic setup of the Neo4j driver
+* ❌ Officially supported Data Mapping framework available
+* ✅ Built-in dev-mode with reload / restart feature
+* ✅ Dedicated support for optimized docker images
+* ✅ Reactive Streams: https://smallrye.io/smallrye-mutiny/[Smallrye Mutiny]
+* ✅ GraalVM native compilation
+
+Demo projects provided:
 
 * quarkus-imperative
 * quarkus-reactive
 
-All can be run with
+Created via: https://code.quarkus.io, version tested: *1.9.2.Final*.
+
+=== Configuration of the Neo4j Java Driver
+
+Support of the all relevant 4.1.x config options under the namespace `quarkus.neo4j.*`, including TLS:
+Basic setup:
+
+[source,properties]
+----
+quarkus.neo4j.uri=bolt://localhost:7687
+quarkus.neo4j.authentication.username=neo4j
+quarkus.neo4j.authentication.password=secret
+----
+
+=== Running
 
 [source,console]
 ----
 ./mvnw quarkus:dev
 ----
 
+=== Create docker images
+
+(Extension `container-image-docker` must be provided once, via `./mvnw quarkus:add-extension -Dextensions="container-image-docker"`).
+
+[source,console]
+----
+./mvnw clean package -Dquarkus.container-image.build=true
+----
+
+=== Create native images
+
+[source,console]
+----
+# For your current system, GraalVM 11 is required
+./mvnw clean package -Pnative
+# As a native docker image
+./mvnw package -Pnative -Dquarkus.native.container-build=true
+----
+
 == Spring
 
-Available as
+* ✅ Automatic setup of the Neo4j driver
+* ✅ Officially supported Data Mapping framework available (SDN 6 for current, SDN5+OGM for older version)
+* ✅ Built-in dev-mode with reload / restart feature
+* ✅ Dedicated support for optimized docker images
+* ✅ Reactive Streams: https://projectreactor.io[Project Reactor]
+* ⚠️ GraalVM native compilation (Currently in beta, not part of a standard setup)
+
+Demo projects provided:
 
 * spring-plain-imperative
 * spring-plain-reactive
 * spring-data-imperative
 * spring-data-reactive
 
-All can be run with
+Created via: https://start.spring.io, version tested: *2.4.0-RC1*.
+
+=== Configuration of the Neo4j Java Driver
+
+Full support of all official 4.1.x config options under the namespace `spring.neo4j.*`. 
+Basic setup:
+
+[source,properties]
+----
+spring.neo4j.uri=bolt://localhost:7687
+spring.neo4j.authentication.username=neo4j
+spring.neo4j.authentication.password=secret
+----
+
+=== Running
 
 [source,console]
 ----
 ./mvnw spring-boot:run
 ----
+
+=== Create docker images
+
+[source,console]
+----
+./mvnw -DskipTests clean spring-boot:build-image
+----
+
+=== Create native images
+
+Not possible ootb at the moment.
+
+== TCK
+
+I have created a TCK - basically a glorified end-to-end-test - that brings up each application and ensure it's expected behaviour.
+You need bash, Docker and JDK 15 to run it:
+
+[source,console]
+----
+cd tck
+./run.sh
+----
+
+It will bring up a Neo4j docker instance and take each project, build a docker image, start it and than executes a couple of requests against it.
+The script is tested currently only under macOS.
+The TCK uses native images when available and supporting dynamic properties.

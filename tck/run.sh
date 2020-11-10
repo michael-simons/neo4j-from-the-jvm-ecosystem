@@ -14,7 +14,6 @@ export NEO4J_BOLT=`docker inspect --format='{{(index (index .NetworkSettings.Por
 
 java src/main/java/org/neo4j/examples/jvm/tck/util/BoltHandshaker.java localhost $NEO4J_BOLT 120
 
-# Declare a string array with type
 declare -a projects=(
   "helidon-se-reactive"
   "micronaut-reactive"
@@ -29,7 +28,6 @@ declare -t prefix=neo4j-from-the-jvm
 
 ./mvnw -DskipTests clean test-compile
 
-# Read the array values with space
 for underTest in "${projects[@]}"; do
   {
     printf "Testing $underTest\n"
@@ -48,7 +46,7 @@ for underTest in "${projects[@]}"; do
 
     elif [[ $underTest = quarkus* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
+      (cd ../$underTest && ./mvnw -DskipTests clean package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
       docker run --name underTest --publish=8080 -e 'QUARKUS_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
       EXPOSED_PORT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort}}' underTest`
 
