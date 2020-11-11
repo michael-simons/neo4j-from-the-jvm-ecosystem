@@ -15,6 +15,25 @@ The portable CDI extension https://quarkus.io/blog/quarkus-dependency-injection/
 So in case you really want to have great Object Mapping but cannot decide to use Spring as a container, 
 you might want to try out the CDI extension.
 
+The goal of this repository is to check and demonstrate what is necessary to achieve the following inside the current Java application frameworks and runtimes:
+
+* Support a couple of "standard" use cases presented as HTTP Api, transporting JSON. This is a hard requirement
+* See if they provide automatic setup of the Neo4j driver or at least a dynamic configuration mechanism to do this
+* Check if there's an officially supported Data Mapping framework available for Neo4j.
+  Having a data mapping framework layer is really nice to have, but if this is not possible, the Neo4j Java driver
+  plays very well with custom mapping functions or things like https://mapstruct.org[MapStruct].
+* Built-in dev-mode with reload / restart feature
+* Dedicated support for optimized docker images (Preferable via the chosen build tool but a two step process via a dedicated docker file is ok)
+* See if a Reactive Streams implementation is present and whether it works with the Neo4j Java driver
+* See if the application can be turned into a GraalVM native image via the chosen build tool without
+  fiddling around with `native-image` parameters
+
+A red cross doesn't mean a given Framework is bad in anyway.
+It is just an indicator that something either doesn't work without additional configuration or programming or is just not there.
+An assesment whether a particular thing is needed or not is up to the reader and must be reasoned about in the context of the framework and it's actually present features.
+
+All the frameworks used and tested here support the actual "business" logic.
+
 == Shared Api
 
 All projects provide the following API:
