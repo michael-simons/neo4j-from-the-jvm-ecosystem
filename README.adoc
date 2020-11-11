@@ -9,9 +9,9 @@ All projects have been created either via their official "starter" services or M
 NOTE: The order in which the frameworks is alphabetical and doesn't represent any preference.
       As I prefer Maven, I chose to create all projects as Maven projects.
 
-https://github.com/spring-projects/spring-data-neo4j(Spring Data Neo4j 6) can be used inside a CDI container as well and is known to work in Liberty and Helidon.
+https://github.com/spring-projects/spring-data-neo4j[Spring Data Neo4j 6] can be used inside a CDI container as well and is known to work in Liberty and Helidon.
 We provide a CDI extension for that. You need to bring in an application scoped instance of the Neo4j Driver.
-The portable CDI extension https://quarkus.io/blog/quarkus-dependency-injection/#extension-points(won't work in Quarkus).
+The portable CDI extension https://quarkus.io/blog/quarkus-dependency-injection/#extension-points[won't work in Quarkus].
 So in case you really want to have great Object Mapping but cannot decide to use Spring as a container, 
 you might want to try out the CDI extension.
 
@@ -135,7 +135,7 @@ Content-Length: 1270
 * ❌ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: Helidon's own implementation
-* ⚠️ GraalVM native compilation (Via a dedicated Docker file)
+* ⚠️ GraalVM native compilation (Via a dedicated Docker file, however custom configuration is required, see below)
 
 Demo projects provided:
 
@@ -183,7 +183,7 @@ WARNING: Stuff that requires reflection, for example the JSONB support, needs sp
 * ✅ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: https://github.com/ReactiveX/RxJava[RxJava2 and 3]
-* ⚠️ GraalVM native compilation (Without additional setup only for Gradle.)
+* ⚠️ GraalVM native compilation (Without additional setup only for Gradle, therefor not tested here)
 
 Demo projects provided:
 
