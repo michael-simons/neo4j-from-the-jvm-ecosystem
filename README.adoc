@@ -179,7 +179,7 @@ WARNING: Stuff that requires reflection, for example the JSONB support, needs sp
 == Micronaut
 
 * ✅ Automatic setup of the Neo4j driver
-* ⚠️ Officially supported Data Mapping framework available (GORM, in beta for Neo4j), SDN 6 might work as well
+* ⚠️ Officially supported Data Mapping framework available (GORM, in beta for Neo4j, SDN 6 might work as well)
 * ✅ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: https://github.com/ReactiveX/RxJava[RxJava2 and 3]
@@ -228,7 +228,7 @@ Additional setup or Gradle is required.
 == Quarkus
 
 * ✅ Automatic setup of the Neo4j driver
-* ❌ Officially supported Data Mapping framework available
+* ⚠️ Officially supported Data Mapping framework available (https://github.com/neo4j/neo4j-ogm[Neo4j-OGM] works in JVM and dev mode and can make use of the Neo4j extension, see `quarkus-ogm` example)
 * ✅ Built-in dev-mode with reload / restart feature
 * ✅ Dedicated support for optimized docker images
 * ✅ Reactive Streams: https://smallrye.io/smallrye-mutiny/[Smallrye Mutiny]

@@ -18,6 +18,7 @@ declare -a projects=(
   "helidon-se-reactive"
   "micronaut-reactive"
   "quarkus-imperative"
+  "quarkus-ogm"
   "quarkus-reactive"
   "spring-data-imperative"
   "spring-data-reactive"
