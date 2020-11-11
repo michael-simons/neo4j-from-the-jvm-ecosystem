@@ -11,7 +11,7 @@ NOTE: The order in which the frameworks is alphabetical and doesn't represent an
 
 https://github.com/spring-projects/spring-data-neo4j(Spring Data Neo4j 6) can be used inside a CDI container as well and is known to work in Liberty and Helidon.
 We provide a CDI extension for that. You need to bring in an application scoped instance of the Neo4j Driver.
-It will work with a good chance in Quarkus too.
+The portable CDI extension https://quarkus.io/blog/quarkus-dependency-injection/#extension-points(won't work in Quarkus).
 So in case you really want to have great Object Mapping but cannot decide to use Spring as a container, 
 you might want to try out the CDI extension.
 
