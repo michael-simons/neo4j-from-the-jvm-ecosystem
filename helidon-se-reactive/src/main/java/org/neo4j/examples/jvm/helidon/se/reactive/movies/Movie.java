@@ -18,6 +18,8 @@
  */
 package org.neo4j.examples.jvm.helidon.se.reactive.movies;
 
+import io.helidon.common.Reflected;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +28,7 @@ import java.util.List;
 /**
  * @author Michael J. Simons
  */
+@Reflected
 public final class Movie {
 
 	private final String title;

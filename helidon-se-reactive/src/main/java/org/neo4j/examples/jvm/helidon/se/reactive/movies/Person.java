@@ -18,12 +18,15 @@
  */
 package org.neo4j.examples.jvm.helidon.se.reactive.movies;
 
+import io.helidon.common.Reflected;
+
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
 /**
  * @author Michael J. Simons
  */
+@Reflected
 public final class Person {
 
 	private final Long id;

@@ -11,6 +11,7 @@ docker network create neo4j-tck &>/dev/null
 
 docker run --name neo4j --publish=7687 -e 'NEO4J_AUTH=neo4j/secret' -d --network neo4j-tck neo4j:4.1 &>/dev/null
 export NEO4J_BOLT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "7687/tcp") 0).HostPort}}' neo4j` &>/dev/null
+export NEO4J_IP=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' neo4j` &>/dev/null
 
 java src/main/java/org/neo4j/examples/jvm/tck/util/BoltHandshaker.java localhost $NEO4J_BOLT 120
 
@@ -36,7 +37,7 @@ for underTest in "${projects[@]}"; do
     if [[ $underTest = helidon* ]]
     then
       (cd ../$underTest && mvn -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
-      docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
+      docker run --name underTest --publish=8080 -e "NEO4J_URI=bolt://$NEO4J_IP:7687" --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = micronaut* ]]
     then

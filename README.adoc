@@ -15,6 +15,10 @@ The portable CDI extension https://quarkus.io/blog/quarkus-dependency-injection/
 So in case you really want to have great Object Mapping but cannot decide to use Spring as a container, 
 you might want to try out the CDI extension.
 
+Neo4j-OGM can work on GraalVM native since version 3.2.19 when you provide an index of the node entities.
+The index must be in `META-INF/resources/name/of/your/package/neo4j-ogm.index`.
+Also the entities in question must be registered for reflection (either through pure GraalVM `reflection-config.json` or through the means of your selected framework.)
+
 The goal of this repository is to check and demonstrate what is necessary to achieve the following inside the current Java application frameworks and runtimes:
 
 * Support a couple of "standard" use cases presented as HTTP Api, transporting JSON. This is a hard requirement
@@ -30,7 +34,7 @@ The goal of this repository is to check and demonstrate what is necessary to ach
 
 A red cross doesn't mean a given Framework is bad in anyway.
 It is just an indicator that something either doesn't work without additional configuration or programming or is just not there.
-An assesment whether a particular thing is needed or not is up to the reader and must be reasoned about in the context of the framework and it's actually present features.
+An assessment whether a particular thing is needed or not is up to the reader and must be reasoned about in the context of the framework and it's actually present features.
 
 All the frameworks used and tested here support the actual "business" logic.
 
@@ -130,12 +134,12 @@ Content-Length: 1270
 
 == Helidon SE
 
-* ❌ Automatic setup of the Neo4j driver (A configuration framework hoever is provided)
+* ❌ Automatic setup of the Neo4j driver (A configuration framework however is provided)
 * ❌ Officially supported Data Mapping framework available
 * ❌ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: Helidon's own implementation
-* ⚠️ GraalVM native compilation (Via a dedicated Docker file, however custom configuration is required, see below)
+* ✅ GraalVM native compilation
 
 Demo projects provided:
 
@@ -172,9 +176,7 @@ mvn clean package
 docker build -f Dockerfile.native .
 ----
 
-WARNING: Stuff that requires reflection, for example the JSONB support, needs special attention via `reflect-config.json` (Compare https://info.michael-simons.eu/2020/09/15/about-the-tooling-available-to-create-native-graalvm-images/["About the tooling available to create native graalvm images"]).
-         Also configuration properties are built into the image and not overwritten by environment variables.
-
+Helidon offers `io.helidon.common.Reflected` for classes that needs to be included in the image and require reflection based access.
 
 == Micronaut
 
@@ -278,6 +280,8 @@ quarkus.neo4j.authentication.password=secret
 # As a native docker image
 ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true
 ----
+
+Quarkus offers `io.quarkus.runtime.annotations.RegisterForReflection` for classes that needs to be included in the image and require reflection based access.
 
 == Spring
 
