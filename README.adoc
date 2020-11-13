@@ -299,7 +299,7 @@ Demo projects provided:
 * spring-data-imperative
 * spring-data-reactive
 
-Created via: https://start.spring.io, version tested: *2.4.0-RC1*.
+Created via: https://start.spring.io, version tested: *2.4.0*.
 
 === Configuration of the Neo4j Java Driver
 
@@ -357,7 +357,7 @@ neo4j-from-the-jvm/helidon-se-reactive          215MB
 neo4j-from-the-jvm/spring-plain-imperative      280MB
 neo4j-from-the-jvm/spring-plain-reactive        282MB
 neo4j-from-the-jvm/spring-data-imperative       282MB
-neo4j-from-the-jvm/spring-data-reactive         284MB
+neo4j-from-the-jvm/spring-data-reactive         285MB
 neo4j-from-the-jvm/micronaut-reactive           359MB
 neo4j-from-the-jvm/quarkus-imperative           538MB
 neo4j-from-the-jvm/quarkus-reactive             540MB
