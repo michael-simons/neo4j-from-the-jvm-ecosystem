@@ -135,7 +135,7 @@ Content-Length: 1270
 == Helidon SE
 
 * ❌ Automatic setup of the Neo4j driver (A configuration framework however is provided)
-* ❌ Officially supported Data Mapping framework available
+* ⚠️ Officially supported Data Mapping framework available (https://github.com/neo4j/neo4j-ogm[Neo4j-OGM] can be used outside a Spring environment and can use the Driver as is, without CDI.)
 * ❌ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: Helidon's own implementation
