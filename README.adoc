@@ -131,6 +131,66 @@ Content-Length: 1270
 } ]
 ----
 
+=== Status / Health checks
+
+==== Liveness
+
+General Liveness of the application:
+
+[quote,Spring Boot Documentation]
+____
+The “Liveness” state of an application tells whether its internal state allows it to work correctly, or recover by itself if it’s currently failing.
+____
+
+[source,bash]
+.Example request
+----
+$ curl 'http://localhost:8080/management/health/liveness' -i -X GET
+----
+
+[source,http,options="nowrap"]
+.Example response
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Mon, 16 Nov 2020 12:51:24 GMT
+Content-Length: 21
+
+{
+  "status" : "UP"
+}
+----
+
+==== Readiness
+
+[quote,Spring Boot Documentation]
+____
+The “Readiness” state of an application tells whether the application is ready to handle traffic. A failing “Readiness” state tells the platform that it should not route traffic to the application for now.
+____
+
+We expect the Neo4j database connection to be taken into consideration for readiness.
+
+[source,bash]
+.Example Request
+----
+$ curl 'http://localhost:8080/management/health/readiness' -i -X GET \
+    -H 'Accept: application/json'
+----
+
+[source,http,options="nowrap"]
+.Example response
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Mon, 16 Nov 2020 12:54:29 GMT
+Content-Length: 21
+
+{
+  "status" : "UP"
+}
+----
 
 == Helidon SE
 
@@ -140,6 +200,7 @@ Content-Length: 1270
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: Helidon's own implementation
 * ✅ GraalVM native compilation
+* ✅ Health (Liveness, Readiness and detailed status)
 
 Demo projects provided:
 
@@ -178,6 +239,39 @@ docker build -f Dockerfile.native .
 
 Helidon offers `io.helidon.common.Reflected` for classes that needs to be included in the image and require reflection based access.
 
+=== Health
+
+Health infrastructure provided with Helidon Health Checks `io.helidon.health:helidon-health` and `io.helidon.health:helidon-health-checks`, Neo4j not yet included ootb.
+Configuration is done programmatically.
+
+(Suggested) Format of the individual Neo4j status:
+
+[source,bash]
+.Request
+----
+$ curl 'http://localhost:8080/management/health/readiness' -i -X GET
+----
+
+[source,json]
+----
+{
+  "outcome": "UP",
+  "status": "UP",
+  "checks": [
+    {
+      "name": "neo4j",
+      "state": "UP",
+      "status": "UP",
+      "data": {
+        "database": "neo4j",
+        "edition": "enterprise",
+        "server": "Neo4j/4.1.0@localhost:7687"
+      }
+    }
+  ]
+}
+----
+
 == Micronaut
 
 * ✅ Automatic setup of the Neo4j driver
@@ -186,6 +280,7 @@ Helidon offers `io.helidon.common.Reflected` for classes that needs to be includ
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
 * ✅ Reactive Streams: https://github.com/ReactiveX/RxJava[RxJava2 and 3]
 * ⚠️ GraalVM native compilation (Without additional setup only for Gradle, therefor not tested here)
+* ✅ Health (Liveness, Readiness and detailed status)
 
 Demo projects provided:
 
@@ -227,6 +322,37 @@ docker build .
 
 Additional setup or Gradle is required.
 
+=== Health
+
+Health infrastructure provided with Micronaut Management (`io.micronaut:micronaut-management`), *Neo4j included ootb*.
+
+NOTE: Path to individual endpoints for `liveness` and `readiness` seems not to be changeable.
+
+Format of the individual Neo4j status:
+
+[source,bash]
+.Request
+----
+$ curl 'http://localhost:8080/management/health' -i -X GET
+----
+
+[source,json]
+----
+{
+  "name": "micronaut-reactive",
+  "status": "UP",
+  "details": {
+    "neo4j": {
+      "name": "micronaut-reactive",
+      "status": "UP",
+      "details": {
+        "server": "Neo4j/4.1.0@localhost:7687"
+      }
+    }
+  }
+}
+----
+
 == Quarkus
 
 * ✅ Automatic setup of the Neo4j driver
@@ -235,6 +361,7 @@ Additional setup or Gradle is required.
 * ✅ Dedicated support for optimized docker images
 * ✅ Reactive Streams: https://smallrye.io/smallrye-mutiny/[Smallrye Mutiny]
 * ✅ GraalVM native compilation
+* ✅ Health (Liveness, Readiness and detailed status)
 
 Demo projects provided:
 
@@ -283,6 +410,36 @@ quarkus.neo4j.authentication.password=secret
 
 Quarkus offers `io.quarkus.runtime.annotations.RegisterForReflection` for classes that needs to be included in the image and require reflection based access.
 
+=== Health
+
+Health infrastructure provided with Quarkus Smallrye Health (`io.quarkus:quarkus-smallrye-health`), *Neo4j included ootb*.
+All paths can be easily configured (health separate from liveness and readiness).
+
+Format of the individual Neo4j status:
+
+[source,bash]
+.Request
+----
+$ curl 'http://localhost:8080/management/health' -i -X GET
+----
+
+[source,json]
+----
+{
+  "status": "UP",
+  "checks": [
+    {
+      "name": "Neo4j connection health check",
+      "status": "UP",
+      "data": {
+        "server": "Neo4j/4.1.0@localhost:7687",
+        "database": "neo4j"
+      }
+    }
+  ]
+}
+----
+
 == Spring
 
 * ✅ Automatic setup of the Neo4j driver
@@ -291,6 +448,7 @@ Quarkus offers `io.quarkus.runtime.annotations.RegisterForReflection` for classe
 * ✅ Dedicated support for optimized docker images
 * ✅ Reactive Streams: https://projectreactor.io[Project Reactor]
 * ⚠️ GraalVM native compilation (Currently in beta, not part of a standard setup)
+* ✅ Health (Liveness, Readiness and detailed status)
 
 Demo projects provided:
 
@@ -331,6 +489,38 @@ spring.neo4j.authentication.password=secret
 
 Not possible ootb at the moment.
 
+=== Health
+
+Health infrastructure provided with Spring Boot Actuator (`org.springframework.boot:spring-boot-starter-actuator`), *Neo4j included ootb*.
+
+NOTE: Path to individual endpoints for `liveness` and `readiness` seems to be changeable with
+`management.endpoint.health.group.live.include=livenessState`, but that feels not very intuitive.
+
+Format of the individual Neo4j status:
+
+[source,bash]
+.Request
+----
+$ curl 'http://localhost:8080/management/health' -i -X GET
+----
+
+[source,json]
+----
+{
+  "status": "UP",
+  "components": {
+    "neo4j": {
+      "status": "UP",
+      "details": {
+        "server": "Neo4j/4.1.0@localhost:7687",
+        "edition": "enterprise",
+        "database": "neo4j"
+      }
+    }
+  }
+}
+----
+
 == TCK
 
 I have created a TCK - basically a glorified end-to-end-test - that brings up each application and ensure it's expected behaviour.
@@ -350,16 +540,16 @@ The script is tested currently only under macOS.
 The size of the Docker images generated by the official instructions, chosing the path of the least resistance (or effort)
 
 ```
-neo4j-from-the-jvm/helidon-se-reactive-native   30.9MB
-neo4j-from-the-jvm/quarkus-imperative-native    163MB
-neo4j-from-the-jvm/quarkus-reactive-native      165MB
+neo4j-from-the-jvm/helidon-se-reactive-native   33.1MB
+neo4j-from-the-jvm/quarkus-imperative-native    164MB
+neo4j-from-the-jvm/quarkus-reactive-native      166MB
 neo4j-from-the-jvm/helidon-se-reactive          215MB
-neo4j-from-the-jvm/spring-plain-imperative      280MB
-neo4j-from-the-jvm/spring-plain-reactive        282MB
-neo4j-from-the-jvm/spring-data-imperative       282MB
-neo4j-from-the-jvm/spring-data-reactive         285MB
+neo4j-from-the-jvm/spring-plain-imperative      282MB
+neo4j-from-the-jvm/spring-plain-reactive        284MB
+neo4j-from-the-jvm/spring-data-imperative       284MB
+neo4j-from-the-jvm/spring-data-reactive         287MB
 neo4j-from-the-jvm/micronaut-reactive           359MB
-neo4j-from-the-jvm/quarkus-imperative           538MB
-neo4j-from-the-jvm/quarkus-reactive             540MB
+neo4j-from-the-jvm/quarkus-imperative           539MB
+neo4j-from-the-jvm/quarkus-reactive             541MB
 neo4j-from-the-jvm/quarkus-ogm                  542MB
 ```

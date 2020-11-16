@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.document;
@@ -74,7 +75,7 @@ class TckTest {
 	@DisplayName("POST /api/people")
 	void verifyPostPerson(@Autowired WebTestClient webclient, @Autowired Driver driver) {
 
-		var newPerson = webclient.post().uri("/people")
+		var newPerson = webclient.post().uri("/api/people")
 			.bodyValue(Person.builder().withName("Lieschen Müller").withBorn(2020).build())
 			.exchange()
 			.expectStatus().isCreated()
@@ -110,7 +111,7 @@ class TckTest {
 	@DisplayName("GET /api/movies")
 	void verifyGetListOfMovies(@Autowired WebTestClient webclient) {
 
-		var movies = webclient.get().uri("/movies")
+		var movies = webclient.get().uri("/api/movies")
 			.exchange()
 			.expectStatus().isOk()
 			.expectHeader().value(HttpHeaders.CONTENT_TYPE,
@@ -140,6 +141,43 @@ class TckTest {
 			.getResponseBody();
 
 		assertMovieList(movies);
+	}
+
+	@Test
+	@DisplayName("GET /management/health/liveness")
+	void verifyLiveness(@Autowired WebTestClient webclient) {
+
+		webclient.get().uri("/management/health/liveness")
+			.accept(MediaType.APPLICATION_JSON)
+			.exchange()
+			.expectStatus().isOk()
+			.expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+			.expectBody()
+			.jsonPath("status").isEqualTo("UP")
+			.consumeWith(document("health/liveness", preprocessResponse(
+				prettyPrint()
+			), relaxedResponseFields(
+				fieldWithPath("status").description("Whether the application can work correctly or not.")
+			)));
+	}
+
+	@Test
+	@DisplayName("GET /management/health/readiness")
+	void verifyReadiness(@Autowired WebTestClient webclient) {
+
+		webclient.get().uri("/management/health/readiness")
+			.accept(MediaType.APPLICATION_JSON)
+			.exchange()
+			.expectStatus().isOk()
+			.expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+			.expectBody()
+			.jsonPath("status").isEqualTo("UP")
+			.consumeWith(document("health/readiness", preprocessResponse(
+				prettyPrint()
+			), relaxedResponseFields(
+				fieldWithPath("status").description(
+					"The “Readiness” state of an application tells whether the application is ready to handle traffic. A failing “Readiness” state tells the platform that it should not route traffic to the application for now.")
+			)));
 	}
 
 	private void assertMovieList(List<Movie> movies) {
@@ -189,7 +227,7 @@ class TckTest {
 
 			return WebTestClient
 				.bindToServer()
-				.baseUrl("http://%s/api".formatted(hostUnderTest))
+				.baseUrl("http://%s".formatted(hostUnderTest))
 				.filter(documentationConfiguration(restDocumentation))
 				.responseTimeout(Duration.ofSeconds(30)) // Hopefully high enough that the container under tests are up
 				.codecs(c -> {

@@ -72,6 +72,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>io.micronaut</groupId>
+      <artifactId>micronaut-management</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.neo4j</groupId>
       <artifactId>micronaut-neo4j-bolt</artifactId>
       <scope>compile</scope>

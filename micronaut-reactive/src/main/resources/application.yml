@@ -6,3 +6,9 @@ neo4j:
   password: secret
   uri: bolt://localhost:7687
 
+endpoints:
+  all.path: /management
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: anonymous

@@ -1,7 +1,10 @@
 package org.neo4j.examples.jvm.helidon.se.reactive;
 
 import io.helidon.config.Config;
+import io.helidon.health.HealthSupport;
+import io.helidon.health.checks.HealthChecks;
 import io.helidon.media.jsonb.JsonbSupport;
+import io.helidon.media.jsonp.JsonpSupport;
 import io.helidon.webserver.Routing;
 import io.helidon.webserver.WebServer;
 
@@ -10,6 +13,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.logging.LogManager;
 
+import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -17,6 +21,7 @@ import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieRepository;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieService;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleRepository;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleService;
+import org.neo4j.examples.jvm.helidon.se.reactive.support.Neo4jHealthCheck;
 import org.neo4j.examples.jvm.helidon.se.reactive.support.SseJsonObjectBodyStreamWriter;
 
 /**
@@ -49,6 +54,7 @@ public final class Application {
 		// Build server with JSONP support
 		WebServer server = WebServer.builder(createRouting(config))
 			.config(config.get("server"))
+			.addMediaSupport(JsonpSupport.create())
 			.addMediaSupport(JsonbSupport.create())
 			.addStreamWriter(new SseJsonObjectBodyStreamWriter())
 			.build();
@@ -87,7 +93,19 @@ public final class Application {
 		var movieService = new MovieService(new MovieRepository(driver));
 		var peopleService = new PeopleService(new PeopleRepository(driver));
 
+		var liveness = HealthSupport.builder()
+			.addLiveness(HealthChecks.healthChecks())
+			.webContext("/management/health/liveness")
+			.build();
+
+		var readiness = HealthSupport.builder()
+			.addReadiness(new Neo4jHealthCheck(driver))
+			.webContext("/management/health/readiness")
+			.build();
+
 		return Routing.builder()
+			.register(liveness)
+			.register(readiness)
 			.register(movieService)
 			.register(peopleService)
 			.build();
