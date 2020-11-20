@@ -41,7 +41,7 @@ for underTest in "${projects[@]}"; do
 
     elif [[ $underTest = micronaut* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
+      (cd ../$underTest && ./mvnw -DskipTests clean package -Dpackaging=docker -Dimage=neo4j-from-the-jvm/$underTest:latest)
       docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = quarkus* ]]

@@ -1,5 +1,7 @@
 package org.neo4j.examples.jvm.micronaut.reactive.movies;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
  *
  * @author Michael J. Simons
  */
+@Introspected
 public final class PersonDetails {
 
 	private final String name;

@@ -18,12 +18,15 @@
  */
 package org.neo4j.examples.jvm.micronaut.reactive.movies;
 
+import io.micronaut.core.annotation.Introspected;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Michael J. Simons
  */
+@Introspected
 public final class Person {
 
 	private final Long id;
