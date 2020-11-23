@@ -209,13 +209,21 @@ Demo projects provided:
 Created via `mvn -U archetype:generate -DinteractiveMode=false -DarchetypeGroupId=io.helidon.archetypes-DarchetypeArtifactId=helidon-quickstart-se -DarchetypeVersion=2.1.0`,
 version tested *2.1.0*.
 
-Run with
+=== Configuration of the Neo4j Java Driver
+
+Manual work required, will change in the near future.
+
+=== Running
 
 [source,console]
 ----
 mvn clean package
 java -jar target/helidon-se-reactive.jar 
 ----
+
+=== Testing
+
+Manual work required, can be solved with JUnit 5 means and the easy to use Helidon SE api.
 
 === Create docker images
 
@@ -307,6 +315,10 @@ neo4j:
 ----
 ./mvnw mn:run
 ----
+
+=== Testing
+
+Directly supported only with an older, not reactive capable version of Neo4j embedded.
 
 === Create docker images
 
@@ -421,6 +433,10 @@ quarkus.neo4j.authentication.password=secret
 ./mvnw quarkus:dev
 ----
 
+=== Testing
+
+Easy setup of test connections (via a custom `QuarkusTestResourceLifecycleManager`). Can be used with Neo4j embedded test harness (as in the example) or with Neo4j Test-Containers.
+
 === Create docker images
 
 (Extension `container-image-docker` must be provided once, via `./mvnw quarkus:add-extension -Dextensions="container-image-docker"`).
@@ -513,6 +529,10 @@ spring.neo4j.authentication.password=secret
 ----
 ./mvnw spring-boot:run
 ----
+
+=== Testing
+
+Easy setup of test connections (via `@DataNeo4jTest` and a custom `@DynamicPropertySource`). Can be used with Neo4j embedded test harness (as in the example) or with Neo4j Test-Containers.
 
 === Create docker images
 

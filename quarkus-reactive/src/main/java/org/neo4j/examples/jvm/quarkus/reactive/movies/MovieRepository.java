@@ -73,11 +73,16 @@ public class MovieRepository {
 				var directors = r.get("directors").asList(v -> asPerson(v.asNode()));
 				var actors = r.get("actors").asList(v -> new Actor(v.get("name").asString(), v.get("roles").asList(Value::asString)));
 
-				var m = new Movie(movieNode.get("title").asString(), movieNode.get("tagline").asString());
-				m.setReleased(movieNode.get("released").asInt());
+				Movie m = asMovie(movieNode);
 				m.addDirectors(directors);
 				m.addActors(actors);
 				return m;
 			});
+	}
+
+	static Movie asMovie(org.neo4j.driver.types.Node movieNode) {
+		var m = new Movie(movieNode.get("title").asString(), movieNode.get("tagline").asString());
+		m.setReleased(movieNode.get("released").asInt());
+		return m;
 	}
 }

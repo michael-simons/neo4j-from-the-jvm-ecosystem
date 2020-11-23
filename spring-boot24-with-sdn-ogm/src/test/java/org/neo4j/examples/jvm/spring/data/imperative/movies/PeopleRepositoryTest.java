@@ -1,4 +1,4 @@
-package org.neo4j.examples.jvm.spring.data.imperative;
+package org.neo4j.examples.jvm.spring.data.imperative.movies;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,9 +37,15 @@ public class PeopleRepositoryTest {
 		var optionalDetails = peopleRepository.getDetailsByName("Keanu Reeves");
 
 		assertThat(optionalDetails).hasValueSatisfying(personDetails -> {
-			assertThat(personDetails.getActedIn()).hasSize(3);
+			assertThat(personDetails.getName()).isEqualTo("Keanu Reeves");
+			assertThat(personDetails.getBorn()).isEqualTo(1964);
+			assertThat(personDetails.getActedIn())
+				.hasSize(3)
+				.extracting(Movie::getTitle).contains("The Matrix Reloaded");
 			assertThat(personDetails.getRelated()).hasSize(5);
 		});
+
+		assertThat(peopleRepository.getDetailsByName("foobar")).isEmpty();
 	}
 
 	@BeforeAll

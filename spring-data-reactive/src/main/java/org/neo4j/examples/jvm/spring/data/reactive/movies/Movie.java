@@ -61,8 +61,8 @@ public final class Movie {
 	public Movie(String title, String description, List<Actor> actors, List<Person> directors) {
 		this.title = title;
 		this.description = description;
-		this.actors = new ArrayList<>(actors);
-		this.directors = new ArrayList<>(directors);
+		this.actors = actors == null ? List.of() : new ArrayList<>(actors);
+		this.directors = directors == null ? List.of() : new ArrayList<>(directors);
 	}
 
 	public String getTitle() {

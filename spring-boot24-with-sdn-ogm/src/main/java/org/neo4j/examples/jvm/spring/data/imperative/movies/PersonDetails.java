@@ -26,10 +26,10 @@ public final class PersonDetails {
 
 	private final List<Person> related;
 
-	public PersonDetails(String name, Integer born, List<Movie> actedIn,
+	public PersonDetails(String name, Long born, List<Movie> actedIn,
 		List<Movie> directed, List<Person> related) {
 		this.name = name;
-		this.born = born;
+		this.born = Math.toIntExact(born);
 		this.actedIn = new ArrayList<>(actedIn);
 		this.directed = new ArrayList<>(directed);
 		this.related = new ArrayList<>(related);

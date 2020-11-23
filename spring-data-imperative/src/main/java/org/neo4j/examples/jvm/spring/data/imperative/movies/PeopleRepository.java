@@ -11,9 +11,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 interface PeopleRepository extends Neo4jRepository<Person, Long> {
 
 	@Query("""
-		MATCH (person:Person)
-		WHERE id(person) = $id
-		WITH person
+		MATCH (person:Person {name: $name})
 		OPTIONAL MATCH (person)-[:DIRECTED]->(d:Movie)
 		OPTIONAL MATCH (person)<-[r:ACTED_IN]->(a:Movie)
 		OPTIONAL MATCH (person)-->(movies)<-[relatedRole:ACTED_IN]-(relatedPerson)		
@@ -22,5 +20,5 @@ interface PeopleRepository extends Neo4jRepository<Person, Long> {
 		collect(DISTINCT a) AS actedIn,
 		collect(DISTINCT relatedPerson) AS related
 		""")
-	Optional<PersonDetails> findDetailsById(Long id);
+	Optional<PersonDetails> getDetailsByName(String name);
 }
