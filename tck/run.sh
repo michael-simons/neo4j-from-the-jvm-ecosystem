@@ -26,6 +26,7 @@ declare -a projects=(
   "spring-plain-imperative"
   "spring-plain-reactive"
   "spring-boot24-with-sdn-ogm"
+  "spring-data-imperative-native"
 )
 declare -t prefix=neo4j-from-the-jvm
 
