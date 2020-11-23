@@ -16,15 +16,16 @@ export NEO4J_IP=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.
 java src/main/java/org/neo4j/examples/jvm/tck/util/BoltHandshaker.java localhost $NEO4J_BOLT 120
 
 declare -a projects=(
-  "helidon-se-reactive"
-  "micronaut-reactive"
-  "quarkus-imperative"
-  "quarkus-ogm"
-  "quarkus-reactive"
-  "spring-data-imperative"
-  "spring-data-reactive"
-  "spring-plain-imperative"
-  "spring-plain-reactive"
+#  "helidon-se-reactive"
+#  "micronaut-reactive"
+#  "quarkus-imperative"
+#  "quarkus-ogm"
+#  "quarkus-reactive"
+#  "spring-data-imperative"
+#  "spring-data-reactive"
+#  "spring-plain-imperative"
+#  "spring-plain-reactive"
+  "spring-boot24-with-sdn-ogm"
 )
 declare -t prefix=neo4j-from-the-jvm
 

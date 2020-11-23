@@ -491,6 +491,10 @@ Demo projects provided:
 
 Created via: https://start.spring.io, version tested: *2.4.0*.
 
+There is an additional project, `spring-boot24-with-sdn-ogm` that does a bit work on the dependencies
+so that people can use SDN+OGM with the most recent versions of Spring Boot.
+The preferred way of using SDN+OGM however is Spring Boot prior to 2.4.
+
 === Configuration of the Neo4j Java Driver
 
 Full support of all official 4.1.x config options under the namespace `spring.neo4j.*`. 
