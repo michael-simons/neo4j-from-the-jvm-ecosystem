@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: org.neo4j.examples.jvm.micronaut.reactive
+testFramework: junit
+sourceLanguage: java
+buildTool: maven
+features: [annotation-api, app-name, docker, http-client, java, java-application, junit, logback, maven, neo4j-bolt, netty-server, readme, shade, yaml]
