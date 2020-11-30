@@ -13,21 +13,27 @@ docker run --name neo4j --publish=7687 -e 'NEO4J_AUTH=neo4j/secret' -d --network
 export NEO4J_BOLT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "7687/tcp") 0).HostPort}}' neo4j` &>/dev/null
 export NEO4J_IP=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' neo4j` &>/dev/null
 
-./mvnw -DskipTests clean test-compile package
-java -jar target/tck-1.0.0-SNAPSHOT.jar --spring.neo4j.uri=bolt://localhost:$NEO4J_BOLT verifyConnection -t PT120S
+(cd tck && ./mvnw -DskipTests clean test-compile package)
+java -jar tck/target/tck-1.0.0-SNAPSHOT.jar --spring.neo4j.uri=bolt://localhost:$NEO4J_BOLT verifyConnection -t PT120S
 
 declare -a projects=(
   "helidon-se-reactive"
+  "helidon-se-reactive-native"
+  "micronaut-imperative"
   "micronaut-reactive"
+  "micronaut-reactive-native"
   "quarkus-imperative"
+  "quarkus-imperative-native"
   "quarkus-ogm"
   "quarkus-reactive"
+  "quarkus-reactive-native"
+  "spring-boot23-with-sdn-ogm"
+  "spring-boot24-with-sdn-ogm"
   "spring-data-imperative"
+  "spring-data-imperative-native"
   "spring-data-reactive"
   "spring-plain-imperative"
   "spring-plain-reactive"
-  "spring-boot24-with-sdn-ogm"
-  "spring-data-imperative-native"
 )
 declare -t prefix=neo4j-from-the-jvm
 
@@ -37,22 +43,22 @@ for underTest in "${projects[@]}"; do
 
     if [[ $underTest = helidon* ]]
     then
-      (cd ../$underTest && mvn -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
       docker run --name underTest --publish=8080 -e "NEO4J_URI=bolt://$NEO4J_IP:7687" --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = micronaut* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean package -Dpackaging=docker -Dimage=neo4j-from-the-jvm/$underTest:latest)
       docker run --name underTest --publish=8080 -e 'NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = quarkus* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
       docker run --name underTest --publish=8080 -e 'QUARKUS_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
+
+    elif [[ $underTest = spring-boot23-* ]]
+    then
+      docker run --name underTest --publish=8080 -e 'ORG_NEO4J_DRIVER_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = spring* ]]
     then
-      (cd ../$underTest && ./mvnw -DskipTests clean spring-boot:build-image -Dspring-boot.build-image.imageName=$prefix/$underTest:latest)
       docker run --name underTest --publish=8080 -e 'SPRING_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     else
@@ -66,7 +72,7 @@ for underTest in "${projects[@]}"; do
       sleep 0.1
     done
     printf '\n'
-    SPRING_NEO4J_URI=bolt://localhost:$NEO4J_BOLT HOST_UNDER_TEST=localhost:$EXPOSED_PORT ./mvnw surefire:test
+    (cd tck && SPRING_NEO4J_URI=bolt://localhost:$NEO4J_BOLT HOST_UNDER_TEST=localhost:$EXPOSED_PORT ./mvnw surefire:test)
     docker rm -f underTest &>/dev/null
   } || {
     docker rm -f underTest &>/dev/null
