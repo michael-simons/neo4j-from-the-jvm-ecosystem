@@ -20,7 +20,7 @@ public final class MoviesController {
 		this.movieRepository = movieRepository;
 	}
 
-	@GetMapping(value = { "", "/" }, produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	@GetMapping(value = { "", "/" }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Flux<Movie> get() {
 		return movieRepository.findAll();
 	}

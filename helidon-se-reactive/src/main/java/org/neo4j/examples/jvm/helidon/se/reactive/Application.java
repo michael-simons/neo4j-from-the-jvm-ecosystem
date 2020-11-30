@@ -13,7 +13,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.logging.LogManager;
 
-import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.neo4j.driver.AuthTokens;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.GraphDatabase;
@@ -22,7 +21,6 @@ import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieService;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleRepository;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleService;
 import org.neo4j.examples.jvm.helidon.se.reactive.support.Neo4jHealthCheck;
-import org.neo4j.examples.jvm.helidon.se.reactive.support.SseJsonObjectBodyStreamWriter;
 
 /**
  * @author Michael J. Simons
@@ -56,7 +54,6 @@ public final class Application {
 			.config(config.get("server"))
 			.addMediaSupport(JsonpSupport.create())
 			.addMediaSupport(JsonbSupport.create())
-			.addStreamWriter(new SseJsonObjectBodyStreamWriter())
 			.build();
 
 		// Try to start the server. If successful, print some info and arrange to

@@ -17,7 +17,7 @@ public final class MoviesController {
 		this.movieRepository = movieRepository;
 	}
 
-	@Get(uris = { "", "/" }, produces = MediaType.TEXT_EVENT_STREAM)
+	@Get(uris = { "", "/" }, produces = MediaType.APPLICATION_JSON)
 	public Flowable<Movie> get() {
 		return movieRepository.findAll();
 	}

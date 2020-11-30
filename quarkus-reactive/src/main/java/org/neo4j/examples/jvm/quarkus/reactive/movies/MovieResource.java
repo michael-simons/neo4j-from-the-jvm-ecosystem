@@ -27,8 +27,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jboss.resteasy.annotations.SseElementType;
-
 /**
  * @author Michael J. Simons
  */
@@ -44,8 +42,7 @@ public class MovieResource {
 	}
 
 	@GET
-	@Produces(MediaType.SERVER_SENT_EVENTS)
-	@SseElementType(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Multi<Movie> getMovies() {
 
 		return movieRepository.findAll();
