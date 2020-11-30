@@ -13,7 +13,8 @@ docker run --name neo4j --publish=7687 -e 'NEO4J_AUTH=neo4j/secret' -d --network
 export NEO4J_BOLT=`docker inspect --format='{{(index (index .NetworkSettings.Ports "7687/tcp") 0).HostPort}}' neo4j` &>/dev/null
 export NEO4J_IP=`docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' neo4j` &>/dev/null
 
-java src/main/java/org/neo4j/examples/jvm/tck/util/BoltHandshaker.java localhost $NEO4J_BOLT 120
+./mvnw -DskipTests clean test-compile package
+java -jar target/tck-1.0.0-SNAPSHOT.jar --spring.neo4j.uri=bolt://localhost:$NEO4J_BOLT verifyConnection -t PT120S
 
 declare -a projects=(
   "helidon-se-reactive"
@@ -29,8 +30,6 @@ declare -a projects=(
   "spring-data-imperative-native"
 )
 declare -t prefix=neo4j-from-the-jvm
-
-./mvnw -DskipTests clean test-compile
 
 for underTest in "${projects[@]}"; do
   {

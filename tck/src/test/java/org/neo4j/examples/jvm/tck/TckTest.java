@@ -11,12 +11,8 @@ import static org.springframework.restdocs.webtestclient.WebTestClientRestDocume
 import static org.springframework.restdocs.webtestclient.WebTestClientRestDocumentation.documentationConfiguration;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.neo4j.driver.Driver;
 import org.neo4j.examples.jvm.tck.movies.Actor;
 import org.neo4j.examples.jvm.tck.movies.Movie;
+import org.neo4j.examples.jvm.tck.movies.MovieService;
 import org.neo4j.examples.jvm.tck.movies.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +34,8 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
@@ -57,16 +55,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 class TckTest {
 
 	@BeforeEach
-	void prepareDatabase(@Autowired Driver driver, @Value("classpath:movies.cypher") Resource movies) {
+	void prepareDatabase(@Autowired MovieService movieService) {
 
-		try (
-			var session = driver.session();
-			var tx = session.beginTransaction()
-		) {
-			tx.run("MATCH (n) DETACH DELETE n");
-			readStatements(movies).forEach(tx::run);
-			tx.commit();
-		}
+		movieService.prepareDatabase();
 	}
 
 	private final static int NUMBER_OF_INITIAL_MOVIES = 38;
@@ -207,6 +198,8 @@ class TckTest {
 	}
 
 	@SpringBootApplication
+	@ComponentScan(excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {
+		Application.class }))
 	static class Dummy {
 	}
 
@@ -236,24 +229,6 @@ class TckTest {
 				})
 				.build();
 		}
-	}
-
-	private static List<String> readStatements(Resource script) {
-
-		List<String> newStatements = new ArrayList<>();
-		try (var scanner = new Scanner(script.getInputStream(), StandardCharsets.UTF_8).useDelimiter(";\r?\n")) {
-			while (scanner.hasNext()) {
-				String statement = scanner.next().trim().replaceAll(";$", "").trim();
-				if (statement.isEmpty()) {
-					continue;
-				}
-				newStatements.add(statement);
-			}
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-
-		return Collections.unmodifiableList(newStatements);
 	}
 
 	private static class JsonEventStreamToJsonArray implements ContentModifier {
