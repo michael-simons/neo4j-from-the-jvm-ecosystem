@@ -22,9 +22,6 @@ import static org.neo4j.examples.jvm.micronaut.reactive.movies.PeopleRepository.
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.Single;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Singleton;
 
@@ -46,15 +43,11 @@ public class MovieRepository {
 
 	public Flowable<Movie> findAll() {
 
-		var sessionHolder = new AtomicReference<RxSession>();
-		return Single
-			.defer(() -> {
-				var session = driver.rxSession();
-				sessionHolder.set(session);
-				return Single.just(session);
-			})
-			.flatMapPublisher(this::executeQuery)
-			.doAfterTerminate(() -> Observable.fromPublisher(sessionHolder.get().close()).subscribe());
+		return Flowable.using(
+			driver::rxSession,
+			this::executeQuery,
+			s -> Observable.fromPublisher(s.close()).subscribe()
+		);
 	}
 
 	private Flowable<Movie> executeQuery(RxSession rxSession) {

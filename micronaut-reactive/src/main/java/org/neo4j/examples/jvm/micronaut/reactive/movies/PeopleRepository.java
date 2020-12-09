@@ -1,15 +1,14 @@
 package org.neo4j.examples.jvm.micronaut.reactive.movies;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Singleton;
 
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.reactive.RxSession;
 import org.neo4j.driver.types.Node;
 
 /**
@@ -32,17 +31,13 @@ public class PeopleRepository {
 					+ "RETURN p\n";
 		var parameters = Map.<String, Object>of("name", person.getName(), "born", person.getBorn());
 
-		var sessionHolder = new AtomicReference<RxSession>();
-		return Single
-			.defer(() -> {
-				var session = driver.rxSession();
-				sessionHolder.set(session);
-				return Single.just(session);
-			})
-			.flatMapPublisher(session -> session.writeTransaction(tx -> tx.run(query, parameters).records()))
-			.map(r -> asPerson(r.get("p").asNode()))
-			.singleOrError()
-			.doAfterTerminate(() -> Observable.fromPublisher(sessionHolder.get().close()).subscribe());
+		return Single.using(
+			driver::rxSession,
+			session -> Flowable.fromPublisher(session.writeTransaction(tx -> tx.run(query, parameters).records()))
+				.map(r -> asPerson(r.get("p").asNode()))
+				.singleOrError(),
+			session -> Observable.fromPublisher(session.close()).subscribe()
+		);
 	}
 
 	static Person asPerson(Node personNode) {
