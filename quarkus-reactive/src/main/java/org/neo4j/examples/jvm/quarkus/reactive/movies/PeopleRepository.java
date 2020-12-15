@@ -39,7 +39,7 @@ class PeopleRepository {
 				return Uni.createFrom().publisher(rxSession.close());
 			})
 			.map(r -> asPerson(r.get("p").asNode()))
-			.transform().toHotStream()
+			.transform().toHotStream() // Otherwise the created uni behaves weird. I guess this because due to `on completion event, a {@code null} item is fired by the produces {@link Uni}` (See `toUni` on Multi.)
 			.toUni();
 	}
 
@@ -69,6 +69,7 @@ class PeopleRepository {
 
 				return new PersonDetails(person.getName(), person.getBorn(), actedIn, directed, related);
 			})
+			.transform().toHotStream() // Otherwise the created uni behaves weird. I guess this because due to `on completion event, a {@code null} item is fired by the produces {@link Uni}` (See `toUni` on Multi.)
 			.toUni();
 	}
 
