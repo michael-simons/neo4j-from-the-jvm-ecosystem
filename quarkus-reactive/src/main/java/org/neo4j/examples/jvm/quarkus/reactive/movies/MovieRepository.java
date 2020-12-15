@@ -23,8 +23,6 @@ import static org.neo4j.examples.jvm.quarkus.reactive.movies.PeopleRepository.as
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 import javax.enterprise.context.ApplicationScoped;
 
 import org.neo4j.driver.Driver;
@@ -45,16 +43,11 @@ public class MovieRepository {
 
 	public Multi<Movie> findAll() {
 
-		var sessionHolder = new AtomicReference<RxSession>();
-		return Uni.createFrom()
-			.deferred(() -> {
-				var session = driver.rxSession();
-				sessionHolder.set(session);
-				return Uni.createFrom().item(session);
-			})
-			.toMulti()
-			.flatMap(this::executeQuery)
-			.onTermination().invoke(() -> Uni.createFrom().publisher(sessionHolder.get().close()).subscribe());
+		return Multi
+			.createFrom().resource(driver::rxSession, this::executeQuery)
+			.withFinalizer(rxSession -> {
+				return Uni.createFrom().publisher(rxSession.close());
+			});
 	}
 
 	private Multi<Movie> executeQuery(RxSession rxSession) {

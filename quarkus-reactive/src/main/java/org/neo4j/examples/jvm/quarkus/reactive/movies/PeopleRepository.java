@@ -2,16 +2,15 @@ package org.neo4j.examples.jvm.quarkus.reactive.movies;
 
 import static org.neo4j.examples.jvm.quarkus.reactive.movies.MovieRepository.asMovie;
 
+import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 
-import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.Flow;
 
 import javax.enterprise.context.ApplicationScoped;
 
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.reactive.RxSession;
 import org.neo4j.driver.types.Node;
 
 /**
@@ -34,17 +33,14 @@ class PeopleRepository {
 					+ "RETURN p\n";
 		var parameters = Map.<String, Object>of("name", person.getName(), "born", person.getBorn());
 
-		var sessionHolder = new AtomicReference<RxSession>();
-		return Uni.createFrom()
-			.deferred(() -> {
-				var session = driver.rxSession();
-				sessionHolder.set(session);
-				return Uni.createFrom().item(session);
+		return Multi
+			.createFrom().resource(driver::rxSession, session -> session.writeTransaction(tx -> tx.run(query, parameters).records()))
+			.withFinalizer(rxSession -> {
+				return Uni.createFrom().publisher(rxSession.close());
 			})
-			.flatMap(session -> Uni.createFrom()
-				.publisher(session.writeTransaction(tx -> tx.run(query, parameters).records())))
 			.map(r -> asPerson(r.get("p").asNode()))
-			.onTermination().invoke(() -> Uni.createFrom().publisher(sessionHolder.get().close()).subscribe());
+			.transform().toHotStream()
+			.toUni();
 	}
 
 	Uni<PersonDetails> getDetailsByName(String name) {
@@ -59,16 +55,12 @@ class PeopleRepository {
 			+ "collect(DISTINCT a) AS actedIn,\n"
 			+ "collect(DISTINCT relatedPerson) AS related\n";
 
-
-		var sessionHolder = new AtomicReference<RxSession>();
-		return Uni.createFrom()
-			.deferred(() -> {
-				var session = driver.rxSession();
-				sessionHolder.set(session);
-				return Uni.createFrom().item(session);
+		return Multi
+			.createFrom().resource(driver::rxSession, session -> session.readTransaction(tx -> tx.run(query, Map.of("name", name)).records()))
+			.withFinalizer(rxSession -> {
+				return Uni.createFrom().publisher(rxSession.close());
 			})
-			.flatMap(session -> Uni.createFrom().publisher(session.readTransaction(tx -> tx.run(query, Map.of("name", name)).records())))
-			.onItem().ifNotNull().transform(record -> {
+			.map(record -> {
 
 				var person = asPerson(record.get("person").asNode());
 				var directed = record.get("directed").asList(v -> asMovie(v.asNode()));
@@ -77,7 +69,7 @@ class PeopleRepository {
 
 				return new PersonDetails(person.getName(), person.getBorn(), actedIn, directed, related);
 			})
-			.onTermination().invoke(() -> Uni.createFrom().publisher(sessionHolder.get().close()).subscribe());
+			.toUni();
 	}
 
 	static Person asPerson(Node personNode) {
