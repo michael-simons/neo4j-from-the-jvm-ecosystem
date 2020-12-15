@@ -18,6 +18,8 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
@@ -29,6 +31,7 @@ import org.neo4j.ogm.annotation.NodeEntity;
  * @author Michael J. Simons
  */
 @NodeEntity
+@RegisterForReflection
 public final class Person {
 
 	@Id @GeneratedValue

@@ -9,6 +9,7 @@ declare -a projects=(
   "quarkus-imperative"
   "quarkus-imperative-native"
   "quarkus-ogm"
+  "quarkus-ogm-native"
   "quarkus-reactive"
   "quarkus-reactive-native"
   "spring-boot23-with-sdn-ogm"

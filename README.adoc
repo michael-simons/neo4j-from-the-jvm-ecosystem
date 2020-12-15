@@ -400,7 +400,7 @@ $ curl 'http://localhost:8080/management/health' -i -X GET
 == Quarkus
 
 * ✅ Automatic setup of the Neo4j driver
-* ⚠️ Officially supported Data Mapping framework available (https://github.com/neo4j/neo4j-ogm[Neo4j-OGM] works in JVM and dev mode and can make use of the Neo4j extension, see `quarkus-ogm` example)
+* ✅ Officially supported Data Mapping framework available (https://github.com/neo4j/neo4j-ogm[Neo4j-OGM], JVM and dev modes work ootb, native mode needs an index, which is just an enumeration of the mapped entities.)
 * ✅ Built-in dev-mode with reload / restart feature
 * ✅ Dedicated support for optimized docker images
 * ✅ Reactive Streams: https://smallrye.io/smallrye-mutiny/[Smallrye Mutiny]
@@ -410,6 +410,7 @@ $ curl 'http://localhost:8080/management/health' -i -X GET
 Demo projects provided:
 
 * quarkus-imperative
+* quarkus-ogm (Take note of the entity index https://github.com/michael-simons/neo4j-from-the-jvm-ecosystem/tree/master/quarkus-ogm/src/main/resources/META-INF/resources/org/neo4j/examples/jvm/quarkus/ogm/movies/neo4j-ogm.index[here].)
 * quarkus-reactive
 
 Created via: https://code.quarkus.io, version tested: *1.9.2.Final*.

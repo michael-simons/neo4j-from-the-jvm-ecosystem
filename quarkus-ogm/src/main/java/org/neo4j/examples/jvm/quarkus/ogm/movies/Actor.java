@@ -18,6 +18,8 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +36,7 @@ import org.neo4j.ogm.annotation.StartNode;
  * @author Michael J. Simons
  */
 @RelationshipEntity("ACTED_IN")
+@RegisterForReflection
 public final class Actor {
 
 	@Id @GeneratedValue

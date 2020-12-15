@@ -18,6 +18,8 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +35,7 @@ import org.neo4j.ogm.annotation.Transient;
  * @author Michael J. Simons
  */
 @NodeEntity
+@RegisterForReflection
 public final class Movie {
 
 	@Id
