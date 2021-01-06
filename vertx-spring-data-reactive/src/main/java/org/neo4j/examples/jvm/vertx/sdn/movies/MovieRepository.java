@@ -18,10 +18,10 @@
  */
 package org.neo4j.examples.jvm.vertx.sdn.movies;
 
-import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;
+import org.springframework.data.repository.reactive.RxJava2SortingRepository;
 
 /**
  * @author Michael J. Simons
  */
-public interface MovieRepository extends ReactiveNeo4jRepository<Movie, String> {
+public interface MovieRepository extends RxJava2SortingRepository<Movie, String> {
 }

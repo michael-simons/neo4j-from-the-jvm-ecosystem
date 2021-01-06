@@ -1,23 +1,20 @@
 package org.neo4j.examples.jvm.vertx.sdn;
 
-import io.vertx.core.AbstractVerticle;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
 import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
-import io.vertx.ext.healthchecks.HealthCheckHandler;
-import io.vertx.ext.healthchecks.HealthChecks;
 import io.vertx.ext.healthchecks.Status;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.BodyHandler;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
+import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.buffer.Buffer;
+import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
+import io.vertx.reactivex.ext.healthchecks.HealthChecks;
+import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.RoutingContext;
+import io.vertx.reactivex.ext.web.handler.BodyHandler;
 
 import org.neo4j.driver.Driver;
-import org.neo4j.driver.reactive.RxResult;
-import org.neo4j.driver.reactive.RxSession;
 import org.neo4j.examples.jvm.vertx.sdn.movies.MovieRepository;
 import org.neo4j.examples.jvm.vertx.sdn.movies.PeopleRepository;
 import org.neo4j.examples.jvm.vertx.sdn.movies.Person;
@@ -29,7 +26,6 @@ import org.springframework.stereotype.Component;
 public final class APIVerticle extends AbstractVerticle {
 
 	private final int port;
-	private final Scheduler scheduler;
 
 	private final Driver driver;
 	private final MovieRepository movieService;
@@ -41,7 +37,6 @@ public final class APIVerticle extends AbstractVerticle {
 	) {
 		this.port = port;
 		this.driver = driver;
-		this.scheduler = Schedulers.fromExecutor(command -> this.context.runOnContext(v -> command.run()));
 
 		this.movieService = movieService;
 		this.peopleRepository = peopleRepository;
@@ -55,7 +50,6 @@ public final class APIVerticle extends AbstractVerticle {
 
 		var readiness = HealthChecks.create(vertx);
 		readiness.register("alive", this::runHealthCheckQuery);
-
 		var router = Router.router(vertx);
 
 		router.get("/api/movies").handler(this::getAllMovies);
@@ -66,67 +60,44 @@ public final class APIVerticle extends AbstractVerticle {
 		vertx
 			.createHttpServer()
 			.requestHandler(router)
-			.listen(port, http -> {
-				if (http.succeeded()) {
-					startPromise.complete();
-				} else {
-					startPromise.fail(http.cause());
-				}
-			});
+			.rxListen(port)
+			.subscribe();
 	}
 
 	void getAllMovies(RoutingContext ctx) {
 
-		var response = ctx.response().putHeader("content-type", "application/json")
-			.setChunked(true)
-			.setStatusCode(200);
+		var response = ctx.response().putHeader("content-type", "text/event-stream")
+			.setStatusCode(200)
+			.setChunked(true);
 
-		// You could also do
-		// movieService.findAll().collectList()
-		// and serialize the Mono<List>, but chunking it that way makes better use
-		// of the reactive capability
-		Mono.just("[").concatWith(
-			this.movieService.findAll(Sort.by("title").ascending())
-				.map(Json::encodePrettily)
-				.switchOnFirst((signal, original) -> Flux.<String>just(signal.get())
-					.concatWith(original.skip(1).map(value -> "," + value))))
-			.concatWith(Mono.just("]"))
-			.publishOn(this.scheduler)
-			.doOnComplete(response::end)
-			.subscribe(response::write);
+		this.movieService.findAll(Sort.by("title").ascending())
+			.map(m -> Buffer.buffer("data: ").appendString(Json.encode(m)).appendString("\n\n"))
+			.subscribe(response.toSubscriber());
 	}
 
 	void createNewPerson(RoutingContext ctx) {
 
-		Mono.fromSupplier(() -> Json.decodeValue(ctx.getBody(), Person.class))
-			.flatMap(this.peopleRepository::save)
-			.publishOn(this.scheduler)
-			.subscribe(p -> ctx.response().putHeader("content-type", "application/json")
+		this.peopleRepository.save(ctx.getBody().toJsonObject().mapTo(Person.class))
+			.map(Json::encode)
+			.map(Buffer::buffer)
+			.subscribe((b, e) -> ctx.response()
+				.putHeader("content-type", "application/json")
 				.setStatusCode(201)
-				.end(Json.encodePrettily(p)));
+				.end(b)
+			);
 	}
 
-	void runHealthCheckQuery(Promise<Status> statusPromise) {
+	void runHealthCheckQuery(io.vertx.reactivex.core.Promise<Status> statusPromise) {
 
-		Flux.usingWhen(Mono.fromSupplier(driver::rxSession),
-			s -> s.writeTransaction(tx -> {
-				RxResult result = tx
-					.run("CALL dbms.components() YIELD name, edition WHERE name = 'Neo4j Kernel' RETURN edition");
-				return Mono.from(result.records()).map((record) -> record.get("edition").asString())
-					.zipWhen((edition) -> Mono.from(result.consume()));
-			}), RxSession::close)
-			.single()
-			.publishOn(this.scheduler)
-			.doOnError(e -> statusPromise.complete(Status.KO()))
-			.subscribe(t -> {
-				var edition = t.getT1();
-				var serverInfo = t.getT2().server();
-
-				statusPromise.complete(Status.OK(new JsonObject()
-						.put("server", serverInfo.version() + "@" + serverInfo.address())
-						.put("edition", edition)
-					)
-				);
-			});
+		Flowable.using(
+			driver::rxSession,
+			s -> s.writeTransaction(tx -> tx.run("CALL dbms.components() YIELD name, edition WHERE name = 'Neo4j Kernel' RETURN edition").consume()),
+			session -> Observable.fromPublisher(session.close()).subscribe()
+		)
+		.map((resultSummary) -> {
+			var serverInfo = resultSummary.server();
+			return Status.OK(new JsonObject().put("server", serverInfo.version() + "@" + serverInfo.address())); })
+		.doOnError(e -> statusPromise.complete(Status.KO()))
+		.subscribe(statusPromise::complete);
 	}
 }

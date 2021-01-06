@@ -1,14 +1,14 @@
 package org.neo4j.examples.jvm.vertx.sdn.movies;
 
-import reactor.core.publisher.Mono;
+import io.reactivex.Maybe;
 
-import org.springframework.data.neo4j.repository.ReactiveNeo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.reactive.RxJava2SortingRepository;
 
 /**
  * @author Michael J. Simons
  */
-public interface PeopleRepository extends ReactiveNeo4jRepository<Person, Long> {
+public interface PeopleRepository extends RxJava2SortingRepository<Person, Long> {
 
 	@Query("""
 		MATCH (person:Person {name: $name})
@@ -20,5 +20,5 @@ public interface PeopleRepository extends ReactiveNeo4jRepository<Person, Long> 
 		collect(DISTINCT a) AS actedIn,
 		collect(DISTINCT relatedPerson) AS related
 		""")
-	Mono<PersonDetails> getDetailsByName(String name);
+	Maybe<PersonDetails> getDetailsByName(String name);
 }
