@@ -26,14 +26,14 @@ public final class APIVerticle extends AbstractVerticle {
 	private final int port;
 
 	private final Driver driver;
-	private final MovieRepository movieService;
+	private final MovieRepository movieRepository;
 	private final PeopleRepository peopleRepository;
 
-	public APIVerticle(int port, Driver driver, MovieRepository movieService, PeopleRepository peopleRepository) {
+	public APIVerticle(int port, Driver driver, MovieRepository movieRepository, PeopleRepository peopleRepository) {
 		this.port = port;
 		this.driver = driver;
 
-		this.movieService = movieService;
+		this.movieRepository = movieRepository;
 		this.peopleRepository = peopleRepository;
 	}
 
@@ -64,7 +64,7 @@ public final class APIVerticle extends AbstractVerticle {
 			.setStatusCode(200)
 			.setChunked(true);
 
-		this.movieService.findAll(Sort.by("title").ascending())
+		this.movieRepository.findAll(Sort.by("title").ascending())
 			.map(m -> Buffer.buffer("data: ").appendString(Json.encode(m)).appendString("\n\n"))
 			.subscribe(response.toSubscriber());
 	}
