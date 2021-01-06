@@ -1,12 +1,13 @@
 package org.neo4j.examples.jvm.vertx.sdn;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.vertx.core.Promise;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.Promise;
 import io.vertx.reactivex.core.buffer.Buffer;
 import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.healthchecks.HealthChecks;
@@ -18,11 +19,8 @@ import org.neo4j.driver.Driver;
 import org.neo4j.examples.jvm.vertx.sdn.movies.MovieRepository;
 import org.neo4j.examples.jvm.vertx.sdn.movies.PeopleRepository;
 import org.neo4j.examples.jvm.vertx.sdn.movies.Person;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
 
-@Component
 public final class APIVerticle extends AbstractVerticle {
 
 	private final int port;
@@ -31,10 +29,7 @@ public final class APIVerticle extends AbstractVerticle {
 	private final MovieRepository movieService;
 	private final PeopleRepository peopleRepository;
 
-	public APIVerticle(@Value("${server.port:8080}") int port,
-		Driver driver, MovieRepository movieService,
-		PeopleRepository peopleRepository
-	) {
+	public APIVerticle(int port, Driver driver, MovieRepository movieService, PeopleRepository peopleRepository) {
 		this.port = port;
 		this.driver = driver;
 
@@ -43,8 +38,7 @@ public final class APIVerticle extends AbstractVerticle {
 	}
 
 	@Override
-	public void start(Promise<Void> startPromise) {
-
+	public Completable rxStart() {
 		var liveness = HealthChecks.create(vertx);
 		liveness.register("alive", promise -> promise.complete(Status.OK()));
 
@@ -57,11 +51,11 @@ public final class APIVerticle extends AbstractVerticle {
 		router.get("/management/health/liveness").handler(HealthCheckHandler.createWithHealthChecks(liveness));
 		router.get("/management/health/readiness").handler(HealthCheckHandler.createWithHealthChecks(readiness));
 
-		vertx
+		return vertx
 			.createHttpServer()
 			.requestHandler(router)
 			.rxListen(port)
-			.subscribe();
+			.ignoreElement();
 	}
 
 	void getAllMovies(RoutingContext ctx) {
@@ -87,7 +81,7 @@ public final class APIVerticle extends AbstractVerticle {
 			);
 	}
 
-	void runHealthCheckQuery(io.vertx.reactivex.core.Promise<Status> statusPromise) {
+	void runHealthCheckQuery(Promise<Status> statusPromise) {
 
 		Flowable.using(
 			driver::rxSession,

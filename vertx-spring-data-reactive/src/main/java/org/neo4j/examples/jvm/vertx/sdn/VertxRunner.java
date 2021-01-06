@@ -1,9 +1,11 @@
 package org.neo4j.examples.jvm.vertx.sdn;
 
-import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 
-import org.springframework.beans.factory.ObjectProvider;
+import org.neo4j.driver.Driver;
+import org.neo4j.examples.jvm.vertx.sdn.movies.MovieRepository;
+import org.neo4j.examples.jvm.vertx.sdn.movies.PeopleRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +15,27 @@ import org.springframework.stereotype.Component;
 @Component
 public final class VertxRunner implements CommandLineRunner {
 
-	private final ObjectProvider<Verticle> allVerticles;
+	private final int port;
 
-	public VertxRunner(ObjectProvider<Verticle> allVerticles) {
-		this.allVerticles = allVerticles;
+	private final Driver driver;
+	private final MovieRepository movieService;
+	private final PeopleRepository peopleRepository;
+
+	public VertxRunner(@Value("${server.port:8080}") int port,
+		Driver driver, MovieRepository movieService,
+		PeopleRepository peopleRepository
+	) {
+		this.port = port;
+		this.driver = driver;
+
+		this.movieService = movieService;
+		this.peopleRepository = peopleRepository;
 	}
 
 	@Override
 	public void run(String... args) {
+
 		final Vertx vertx = Vertx.vertx();
-		allVerticles.forEach(vertx::deployVerticle);
+		vertx.deployVerticle(new APIVerticle(port, driver, movieService, peopleRepository));
 	}
 }
