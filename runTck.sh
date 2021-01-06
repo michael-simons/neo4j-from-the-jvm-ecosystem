@@ -35,6 +35,7 @@ declare -a projects=(
   "spring-data-reactive"
   "spring-plain-imperative"
   "spring-plain-reactive"
+  "vertx-spring-data-reactive"
 )
 declare -t prefix=neo4j-from-the-jvm
 
@@ -59,6 +60,10 @@ for underTest in "${projects[@]}"; do
       docker run --name underTest --publish=8080 -e 'ORG_NEO4J_DRIVER_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 
     elif [[ $underTest = spring* ]]
+    then
+      docker run --name underTest --publish=8080 -e 'SPRING_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
+
+    elif [[ $underTest = vertx-spring* ]]
     then
       docker run --name underTest --publish=8080 -e 'SPRING_NEO4J_URI=bolt://neo4j:7687' --network neo4j-tck -d $prefix/$underTest &>/dev/null
 

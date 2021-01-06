@@ -19,6 +19,7 @@ declare -a projects=(
   "spring-data-reactive"
   "spring-plain-imperative"
   "spring-plain-reactive"
+  "vertx-spring-data-reactive"
 )
 declare -t prefix=neo4j-from-the-jvm
 
@@ -56,6 +57,10 @@ for underTest in "${projects[@]}"; do
   then
     (cd $underTest && ./mvnw -DskipTests clean spring-boot:build-image -Dspring-boot.build-image.imageName=$prefix/$underTest:latest)
     
+  elif [[ $underTest = vertx-spring* ]]
+  then
+    (cd $underTest && ./mvnw -DskipTests clean spring-boot:build-image -Dspring-boot.build-image.imageName=$prefix/$underTest:latest)
+
   else
     echo "No match"
   fi
