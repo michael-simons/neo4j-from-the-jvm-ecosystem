@@ -3,6 +3,12 @@ module sdn.mp {
 	requires com.fasterxml.jackson.annotation;
 	requires com.fasterxml.jackson.databind;
 
+	// The Cypher-DSL provides a valid Java module.
+	// SDN 6.1 is not build as Multi-Release jar and thus does
+	// not contain a module-info which could require it, therefore we
+	// must do this manually.
+	requires org.neo4j.cypherdsl.core;
+
 	requires spring.beans;
 	requires spring.boot;
 	requires spring.boot.autoconfigure;
