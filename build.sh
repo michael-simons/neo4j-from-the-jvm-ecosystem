@@ -15,6 +15,7 @@ declare -a projects=(
   "spring-boot23-with-sdn-ogm"
   "spring-boot24-with-sdn-ogm"
   "spring-data-imperative"
+  "spring-data-imperative-module-path"
   "spring-data-imperative-native"
   "spring-data-reactive"
   "spring-plain-imperative"
@@ -53,6 +54,10 @@ for underTest in "${projects[@]}"; do
   then
     (cd $underTest && ./mvnw -DskipTests clean package -Dquarkus.container-image.build=true -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest)
 
+  elif [[ $underTest = spring-data-imperative-module-path ]]
+  then
+    (cd $underTest && ./mvnw -DskipTests clean package && docker build --tag neo4j-from-the-jvm/$underTest:latest .)
+    
   elif [[ $underTest = spring* ]]
   then
     (cd $underTest && ./mvnw -DskipTests clean spring-boot:build-image -Dspring-boot.build-image.imageName=$prefix/$underTest:latest)

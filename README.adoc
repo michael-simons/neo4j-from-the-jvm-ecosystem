@@ -621,7 +621,7 @@ $ curl 'http://localhost:8080/management/health' -i -X GET
 == TCK
 
 I have created a TCK - basically a glorified end-to-end-test - that brings up each application and ensure it's expected behaviour.
-You need bash, Docker and JDK 15 to run it:
+You need bash, Docker and JDK 16 to run it:
 
 [source,console]
 ----
