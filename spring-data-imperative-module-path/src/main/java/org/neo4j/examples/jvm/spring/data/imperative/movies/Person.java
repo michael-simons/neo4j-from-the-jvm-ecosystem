@@ -28,7 +28,7 @@ import org.springframework.data.neo4j.core.schema.Node;
  * @author Michael J. Simons
  */
 @Node
-public final record Person(
+public record Person(
 
 	@Id @GeneratedValue
 	Long id,

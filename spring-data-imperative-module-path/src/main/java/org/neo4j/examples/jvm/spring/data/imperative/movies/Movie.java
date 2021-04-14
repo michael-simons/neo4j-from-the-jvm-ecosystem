@@ -34,7 +34,7 @@ import org.springframework.data.neo4j.core.schema.Relationship.Direction;
  * @author Michael J. Simons
  */
 @Node
-public final record Movie(
+public record Movie(
 
 	@Id
 	String title,

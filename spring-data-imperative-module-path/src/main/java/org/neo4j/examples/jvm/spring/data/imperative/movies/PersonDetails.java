@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author Michael J. Simons
  */
-public record PersonDetails(
+public record PersonDetails (
 
 	String name,
 
