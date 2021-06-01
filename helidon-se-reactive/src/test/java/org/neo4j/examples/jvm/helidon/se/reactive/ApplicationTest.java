@@ -35,6 +35,7 @@ class ApplicationTest {
 	static void startTheServer() throws Exception {
 
 		neo4jContainer = new Neo4jContainer<>("neo4j:4.0")
+			.withReuse(true)
 			.withAdminPassword("secret");
 		neo4jContainer.start();
 
@@ -102,8 +103,7 @@ class ApplicationTest {
 			.GET().build();
 
 		var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-		var resultObject = Json.createReader(new StringReader(response.body().replaceFirst("data: ", ""))).readObject();
+		var resultObject = Json.createReader(new StringReader(response.body().replaceFirst("data: ", ""))).readArray().getJsonObject(0);
 		Assertions.assertEquals("The Matrix", resultObject.getString("title"));
 	}
 }

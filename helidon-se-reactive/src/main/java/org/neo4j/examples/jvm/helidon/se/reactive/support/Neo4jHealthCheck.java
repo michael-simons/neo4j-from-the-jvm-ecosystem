@@ -2,12 +2,15 @@ package org.neo4j.examples.jvm.helidon.se.reactive.support;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
+import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
+import org.eclipse.microprofile.health.Readiness;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 
 /**
  * @author Michael J. Simons
  */
+@Readiness
 public class Neo4jHealthCheck implements HealthCheck {
 
 	/**
@@ -17,11 +20,15 @@ public class Neo4jHealthCheck implements HealthCheck {
 
 	private final Driver driver;
 
-	public Neo4jHealthCheck(Driver driver) {
+	Neo4jHealthCheck(Driver driver) {
 		this.driver = driver;
 	}
 
-	private HealthCheckResponse runHealthCheckQuery() {
+	public static Neo4jHealthCheck create(Driver driver) {
+		return new Neo4jHealthCheck(driver);
+	}
+
+	private HealthCheckResponse runHealthCheckQuery(HealthCheckResponseBuilder builder) {
 
 		// We use WRITE here to make sure UP is returned for a server that supports
 		// all possible workloads.
@@ -36,7 +43,7 @@ public class Neo4jHealthCheck implements HealthCheck {
 				var resultSummary = result.consume();
 				var serverInfo = resultSummary.server();
 
-				var responseBuilder = HealthCheckResponse.named("neo4j")
+				var responseBuilder = builder
 					.withData("server", serverInfo.version() + "@" + serverInfo.address())
 					.withData("edition", edition);
 
@@ -53,10 +60,11 @@ public class Neo4jHealthCheck implements HealthCheck {
 	@Override
 	public HealthCheckResponse call() {
 
+		var builder = HealthCheckResponse.named("Neo4j connection health check");
 		try {
-			return runHealthCheckQuery();
+			return runHealthCheckQuery(builder);
 		} catch (Exception ex) {
-			return HealthCheckResponse.down("neo4j");
+			return builder.down().withData("reason", ex.getMessage()).build();
 		}
 	}
 }

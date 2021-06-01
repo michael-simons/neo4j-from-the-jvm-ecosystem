@@ -194,7 +194,7 @@ Content-Length: 21
 
 == Helidon SE
 
-* ❌ Automatic setup of the Neo4j driver (A configuration framework however is provided)
+* ✅ Automatic setup of the Neo4j driver (A configuration framework however is provided)
 * ⚠️ Officially supported Data Mapping framework available (https://github.com/neo4j/neo4j-ogm[Neo4j-OGM] can be used outside a Spring environment and can use the Driver as is, without CDI.)
 * ❌ Built-in dev-mode with reload / restart feature
 * ⚠️ Dedicated support for optimized docker images (A Docker file is provided)
@@ -206,12 +206,29 @@ Demo projects provided:
 
 * helidon-se-reactive
 
-Created via `mvn -U archetype:generate -DinteractiveMode=false -DarchetypeGroupId=io.helidon.archetypes-DarchetypeArtifactId=helidon-quickstart-se -DarchetypeVersion=2.1.0`,
-version tested *2.1.0*.
+Created via `mvn -U archetype:generate -DinteractiveMode=false -DarchetypeGroupId=io.helidon.archetypes-DarchetypeArtifactId=helidon-quickstart-se -DarchetypeVersion=2.3.0`,
+version tested *2.3.0*.
 
 === Configuration of the Neo4j Java Driver
 
-Manual work required, will change in the near future.
+No manual work is required. Any namespace in a YAML or properties file can be used. The integration is provided as an artifact under those coordinates:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.helidon.integrations.neo4j</groupId>
+    <artifactId>helidon-integrations-neo4j</artifactId>
+</dependency>
+----
+
+This is an example how to use Neo4j properties under the key `neo4j`:
+
+[source,java]
+----
+var driver = config.get("neo4j").as(Neo4j::create).map(Neo4j::driver).orElseThrow();
+----
+
+The driver can than be used in the SE application / microservice.
 
 === Running
 
@@ -249,10 +266,12 @@ Helidon offers `io.helidon.common.Reflected` for classes that needs to be includ
 
 === Health
 
-Health infrastructure provided with Helidon Health Checks `io.helidon.health:helidon-health` and `io.helidon.health:helidon-health-checks`, Neo4j not yet included ootb.
-Configuration is done programmatically.
+Health infrastructure provided with Helidon Health Checks `io.helidon.health:helidon-health` and `io.helidon.health:helidon-health-checks`,
+support for Neo4j included via `io.helidon.integrations.neo4j:helidon-integrations-neo4j-health`.
 
-(Suggested) Format of the individual Neo4j status:
+However, the build-in support in 2.3.0 is broken for native compilation, see https://github.com/oracle/helidon/issues/3060[GH-3060].
+
+Format of the individual Neo4j status:
 
 [source,bash]
 .Request
@@ -267,13 +286,12 @@ $ curl 'http://localhost:8080/management/health/readiness' -i -X GET
   "status": "UP",
   "checks": [
     {
-      "name": "neo4j",
+      "name": "Neo4j connection health check",
       "state": "UP",
       "status": "UP",
       "data": {
         "database": "neo4j",
-        "edition": "enterprise",
-        "server": "Neo4j/4.1.0@localhost:7687"
+        "server": "Neo4j/4.2.0@localhost:7687"
       }
     }
   ]
@@ -658,8 +676,8 @@ in a `GET /management/health/readiness`.
 [options="header"]
 |=======================
 |Framework                     | Image size | Time to healthy  | Memory usage (before) | Throughput              | Average latency      | Memory usage (after )
-|helidon-se-reactive           | 215.0MB    | 0m2.016s         | 140.60MiB             | 781.356 requests/second   |  25.628 milliseconds | 746.2MiB
-|helidon-se-reactive-native    |  33.0MB🥇  | 0m0.676s🥉       |  60.34MiB🥉           | 618.389 requests/second  |  32.379 milliseconds | 742.9MiB
+|helidon-se-reactive           | 231.0MB    | 0m2.016s         | 148.1MiB             | 885.052 requests/second   |  25.628 milliseconds | 788.3MiB 
+|helidon-se-reactive-native    |  33.6MB🥇  | 0m0.676s🥉       |  60.73MiB🥉           | 729.026 requests/second  |  32.379 milliseconds | 853.7MiB
 |micronaut-imperative          | 362.0MB    | 0m2.581s         | 169.9MiB              | 1006.241 requests/second🥇 |  19.904 milliseconds🥇 | 799.7MiB
 |micronaut-reactive            | 362.0MB    | 0m2.579s         | 172.00MiB             | 147.376 requests/second   | 135.795 milliseconds | 693.0MiB 
 |micronaut-reactive-native     |  91.2MB🥈  | 0m0.594s         |  68.30MiB             | 135.618 requests/second   | 147.520 milliseconds | 962.3MiB

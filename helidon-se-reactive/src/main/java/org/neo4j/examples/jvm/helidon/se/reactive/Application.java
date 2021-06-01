@@ -3,6 +3,7 @@ package org.neo4j.examples.jvm.helidon.se.reactive;
 import io.helidon.config.Config;
 import io.helidon.health.HealthSupport;
 import io.helidon.health.checks.HealthChecks;
+import io.helidon.integrations.neo4j.Neo4j;
 import io.helidon.media.jsonb.JsonbSupport;
 import io.helidon.media.jsonp.JsonpSupport;
 import io.helidon.webserver.Routing;
@@ -10,12 +11,8 @@ import io.helidon.webserver.WebServer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.logging.LogManager;
 
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieRepository;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.MovieService;
 import org.neo4j.examples.jvm.helidon.se.reactive.movies.PeopleRepository;
@@ -76,17 +73,9 @@ public final class Application {
 		return server;
 	}
 
-	private static Driver createNeo4jDriver(Config config) {
-		var username = config.get("neo4j.authentication.username").as(String.class).get();
-		var password = config.get("neo4j.authentication.password").as(String.class).get();
-		var uri = config.get("neo4j.uri").as(URI.class).get();
-
-		return GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-	}
-
 	private static Routing createRouting(Config config) {
 
-		var driver = createNeo4jDriver(config);
+		var driver = config.get("neo4j").as(Neo4j::create).map(Neo4j::driver).orElseThrow();
 		var movieService = new MovieService(new MovieRepository(driver));
 		var peopleService = new PeopleService(new PeopleRepository(driver));
 
@@ -96,7 +85,7 @@ public final class Application {
 			.build();
 
 		var readiness = HealthSupport.builder()
-			.addReadiness(new Neo4jHealthCheck(driver))
+			.addReadiness(Neo4jHealthCheck.create(driver))
 			.webContext("/management/health/readiness")
 			.build();
 

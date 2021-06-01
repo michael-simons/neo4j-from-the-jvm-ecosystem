@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.helidon.applications</groupId>
 		<artifactId>helidon-se</artifactId>
-		<version>2.1.0</version>
+		<version>2.3.0</version>
 		<relativePath/>
 	</parent>
 	<groupId>org.neo4j.examples.neo4j_from_the_jvm_ecoysystem</groupId>
@@ -16,20 +16,14 @@
 
 	<properties>
 		<mainClass>org.neo4j.examples.jvm.helidon.se.reactive.Application</mainClass>
-		<neo4j-java-driver.version>4.1.1</neo4j-java-driver.version>
-		<neo4j.version>1.15.0</neo4j.version>
+		<testcontainers.version>1.15.0</testcontainers.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
-			<groupId>org.neo4j.driver</groupId>
-			<artifactId>neo4j-java-driver</artifactId>
-			<version>${neo4j-java-driver.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>neo4j</artifactId>
-			<version>${neo4j.version}</version>
+			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -51,6 +45,10 @@
 		<dependency>
 			<groupId>io.helidon.health</groupId>
 			<artifactId>helidon-health-checks</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.helidon.integrations.neo4j</groupId>
+			<artifactId>helidon-integrations-neo4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>

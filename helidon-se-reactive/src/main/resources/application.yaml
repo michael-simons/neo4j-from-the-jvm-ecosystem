@@ -7,3 +7,5 @@ neo4j:
   authentication:
     username: neo4j
     password: secret
+  pool:
+    metricsEnabled: true
