@@ -21,6 +21,8 @@ package org.neo4j.examples.jvm.spring.data.reactive.movies;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.data.neo4j.core.schema.GeneratedValue;
+import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
 import org.springframework.data.neo4j.core.schema.TargetNode;
 
@@ -32,6 +34,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @RelationshipProperties
 public final class Actor {
+
+	@Id @GeneratedValue @JsonIgnore
+	private Long id;
 
 	@TargetNode
 	@JsonIgnore

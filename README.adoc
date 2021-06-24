@@ -524,7 +524,7 @@ Demo projects provided:
 * spring-data-imperative
 * spring-data-reactive
 
-Created via: https://start.spring.io, version tested: *2.4.0*.
+Created via: https://start.spring.io, version tested: *2.5.1*.
 
 There is an additional project, `spring-boot24-with-sdn-ogm` that does a bit work on the dependencies
 so that people can use SDN+OGM with the most recent versions of Spring Boot.
@@ -676,25 +676,24 @@ in a `GET /management/health/readiness`.
 [options="header"]
 |=======================
 |Framework                     | Image size | Time to healthy  | Memory usage (before) | Throughput              | Average latency      | Memory usage (after )
-|helidon-se-reactive           | 231.0MB    | 0m2.016s         | 148.1MiB             | 885.052 requests/second     |  25.628 milliseconds | 788.3MiB 
+|helidon-se-reactive           | 231.0MB    | 0m2.016s🥉       | 148.1MiB             | 885.052 requests/second     |  25.628 milliseconds | 788.3MiB 
 |helidon-se-reactive-native    |  33.6MB🥇  | 0m0.676s🥈       |  60.73MiB🥉           | 729.026 requests/second    |  32.379 milliseconds | 853.7MiB
-|micronaut-imperative          | 362.0MB    | 0m2.581s         | 169.9MiB              | 1006.241 requests/second🥈 |  19.904 milliseconds🥈 | 799.7MiB
+|micronaut-imperative          | 362.0MB    | 0m2.581s         | 169.9MiB              | 1006.241 requests/second |  19.904 milliseconds🥈 | 799.7MiB
 |micronaut-reactive            | 362.0MB    | 0m2.579s         | 172.00MiB             | 147.376 requests/second    | 135.795 milliseconds | 693.0MiB 
 |micronaut-reactive-native     |  91.2MB🥈  | 0m0.594s🥇       |  68.30MiB             | 135.618 requests/second    | 147.520 milliseconds | 962.3MiB
-|quarkus-imperative            | 464.0MB    | 0m4.283s         | 103.8MiB             | 1095.802 requests/second🥇  |  18.272 milliseconds🥇 | 666.6MiB
-|quarkus-imperative-native     | 150.0MB    | 0m3.316s         |  26.09MiB🥇           | 996.390 requests/second🥉   |  20.096 milliseconds🥉 | 699.3MiB
+|quarkus-imperative            | 464.0MB    | 0m4.283s         | 103.8MiB             | 1095.802 requests/second🥉  |  18.272 milliseconds🥇 | 666.6MiB
+|quarkus-imperative-native     | 150.0MB    | 0m3.316s         |  26.09MiB🥇           | 996.390 requests/second   |  20.096 milliseconds🥉 | 699.3MiB
 |quarkus-ogm                   | 467.0MB    | 0m4.335s         | 111.7MiB             | 622.312 requests/second   |  32.175 milliseconds | 908.1MiB
 |quarkus-reactive              | 466.0MB    | 0m4.411s         | 117.0MiB             | 487.273 requests/second   |  41.087 milliseconds | 665.8MiB
 |quarkus-reactive-native       | 151.0MB    | 0m3.353s         |  26.42MiB🥈           | 446.196 requests/second   |  44.868 milliseconds | 650.8MiB
-|spring-boot23-with-sdn-ogm    | 290.0MB    | 0m4.719s         | 197.40MiB             |  49.789 requests/second   | 400.856 milliseconds | 411.4MiB
+|spring-boot23-with-sdn-ogm    | 290.0MB    | 0m4.719s         | 197.40MiB             |  49.789 requests/second   | 400.856 milliseconds | 411.4MiB🥇
 |spring-boot24-with-sdn-ogm    | 286.0MB    | 0m4.843s         | 206.10MiB             |  42.680 requests/second   | 468.021 milliseconds | 610.5MiB
-|spring-data-imperative        | 284.0MB    | 0m4.586s         | 215.30MiB             | 507.872 requests/second   |  39.426 milliseconds | 329.2MiB 🥉
-|spring-data-imperative-native | 110.0MB🥉  | 0m0.787s🥉       |  71.68MiB             | 464.728 requests/second   |  43.078 milliseconds | 506.6MiB
-|spring-data-reactive          | 287.0MB    | 0m4.452s         | 223.80MiB             | 511.492 requests/second   |  39.147 milliseconds | 345.0MiB
-|spring-plain-imperative       | 282.0MB    | 0m4.052s         | 178.50MiB             | 886.517 requests/second |  22.588 milliseconds | 260.0MiB🥇
-|spring-plain-reactive         | 284.0MB    | 0m4.187s         | 184.40MiB             | 957.007 requests/second |  20.923 milliseconds | 326.0MiB🥈
+|spring-data-imperative        | 300.0MB    | 0m6.105s         | 236.90MiB             | 709.336 requests/second   |  28.226 milliseconds | 797.1MiB 
+|spring-data-imperative-native | 134.0MB🥉  | 0m3.462s         |  71.08MiB             | 605.255 requests/second   |  33.078 milliseconds | 722.0MiB
+|spring-data-reactive          | 302.0MB    | 0m6.268s         | 241.50MiB             | 673.214 requests/second   |  29.762 milliseconds | 738MiB 
+|spring-plain-imperative       | 297.0MB    | 0m6.066s         | 197.80MiB             | 1258.016 requests/second🥈 |  15.917 milliseconds | 414.6MiB🥈
+|spring-plain-reactive         | 299.0MB    | 0m5.945s         | 253.40Mi B            | 1272.513 requests/second🥇 |  15.738 milliseconds | 588.4MiB🥉
 |=======================
-
 
 Numbers taken on a MacBook Pro with 2.4Ghz Intel Core i9 and 32 GB Ram.
 Docker set to use at Max 8 "CPUs" and 8GiB memory in total.
