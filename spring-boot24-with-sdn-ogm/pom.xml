@@ -17,7 +17,7 @@
 	</description>
 
 	<properties>
-		<java.version>15</java.version>
+		<java.version>16</java.version>
 		<spring-data-releasetrain.version>Neumann-SR9</spring-data-releasetrain.version>
 		<neo4j-ogm.version>3.2.25</neo4j-ogm.version>
 		<neo4j.version>4.3.3</neo4j.version>
@@ -89,6 +89,13 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
