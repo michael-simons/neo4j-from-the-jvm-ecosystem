@@ -18,24 +18,21 @@
  */
 package org.neo4j.examples.jvm.tck.movies;
 
-import lombok.Builder;
-import lombok.Data;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author Michael J. Simons
  */
-@Data
-@Builder(builderClassName = "Builder", setterPrefix = "with")
-@JsonDeserialize(builder = Person.Builder.class)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public final class Person {
+public record Person(
+	Long id,
 
-	private final Long id;
+	String name,
 
-	private final String name;
+	Integer born
+) {
 
-	private final Integer born;
+	public Person(String name, Integer born) {
+		this(null, name, born);
+	}
 }

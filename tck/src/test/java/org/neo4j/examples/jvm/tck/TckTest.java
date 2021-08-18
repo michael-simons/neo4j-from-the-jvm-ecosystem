@@ -67,14 +67,14 @@ class TckTest {
 	void verifyPostPerson(@Autowired WebTestClient webclient, @Autowired Driver driver) {
 
 		var newPerson = webclient.post().uri("/api/people")
-			.bodyValue(Person.builder().withName("Lieschen Müller").withBorn(2020).build())
+			.bodyValue(new Person("Lieschen Müller", 2020))
 			.exchange()
 			.expectStatus().isCreated()
 			.expectBody(Person.class)
 			.value(p -> {
-				assertThat(p.getId()).isNotNull();
-				assertThat(p.getBorn()).isEqualTo(2020);
-				assertThat(p.getName()).isEqualTo("Lieschen Müller");
+				assertThat(p.id()).isNotNull();
+				assertThat(p.born()).isEqualTo(2020);
+				assertThat(p.name()).isEqualTo("Lieschen Müller");
 			})
 			.consumeWith(document("people",
 				preprocessResponse(prettyPrint()),
@@ -92,7 +92,7 @@ class TckTest {
 			.getResponseBody();
 
 		try (var session = driver.session()) {
-			var cnt = session.run("MATCH (n) WHERE id(n) = $id RETURN count(n)", Map.of("id", newPerson.getId()))
+			var cnt = session.run("MATCH (n) WHERE id(n) = $id RETURN count(n)", Map.of("id", newPerson.id()))
 				.single().get(0).asLong();
 			assertThat(cnt).isEqualTo(1L);
 		}
@@ -174,25 +174,25 @@ class TckTest {
 	private void assertMovieList(List<Movie> movies) {
 
 		Consumer<Movie> theMovieCloudAtlas = m -> {
-			assertThat(m.getActors())
-				.extracting(Actor::getName)
+			assertThat(m.actors())
+				.extracting(Actor::name)
 				.containsExactlyInAnyOrder("Hugo Weaving", "Jim Broadbent", "Tom Hanks", "Halle Berry");
 
-			assertThat(m.getActors())
-				.filteredOn(Actor::getName, "Halle Berry")
+			assertThat(m.actors())
+				.filteredOn(Actor::name, "Halle Berry")
 				.singleElement()
-				.extracting(Actor::getRoles).asList()
+				.extracting(Actor::roles).asList()
 				.containsExactlyInAnyOrder("Luisa Rey", "Jocasta Ayrs", "Ovid", "Meronym");
 
-			assertThat(m.getDirectors())
-				.allSatisfy(p -> assertThat(p.getId()).isNotNull())
-				.extracting(Person::getName)
+			assertThat(m.directors())
+				.allSatisfy(p -> assertThat(p.id()).isNotNull())
+				.extracting(Person::name)
 				.containsExactlyInAnyOrder("Lana Wachowski", "Lilly Wachowski", "Tom Tykwer");
 		};
 
 		assertThat(movies)
 			.hasSize(NUMBER_OF_INITIAL_MOVIES)
-			.filteredOn(Movie::getTitle, "Cloud Atlas")
+			.filteredOn(Movie::title, "Cloud Atlas")
 			.singleElement()
 			.satisfies(theMovieCloudAtlas);
 	}

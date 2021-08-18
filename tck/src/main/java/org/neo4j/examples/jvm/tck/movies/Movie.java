@@ -18,28 +18,21 @@
  */
 package org.neo4j.examples.jvm.tck.movies;
 
-import lombok.Builder;
-import lombok.Data;
-
 import java.util.List;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author Michael J. Simons
  */
-@Data
-@Builder(builderClassName = "Builder", setterPrefix = "with")
-@JsonDeserialize(builder = Movie.Builder.class)
-public final class Movie {
+public record Movie(
 
-	private final String title;
+	String title,
 
-	private final String description;
+	String description,
 
-	private final List<Actor> actors;
+	List<Actor> actors,
 
-	private final List<Person> directors;
+	List<Person> directors,
 
-	private final Integer released;
+	Integer released
+) {
 }
