@@ -30,6 +30,7 @@ declare -a projects=(
   "quarkus-reactive-native"
   "spring-boot23-with-sdn-ogm"
   "spring-boot24-with-sdn-ogm"
+  "spring-boot25-with-sdn-ogm"
   "spring-data-imperative"
   "spring-data-imperative-module-path"
   "spring-data-imperative-native"

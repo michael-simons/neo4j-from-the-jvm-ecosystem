@@ -643,8 +643,7 @@ You need bash, Docker and JDK 16 to run it:
 
 [source,console]
 ----
-cd tck
-./run.sh
+./runTck.sh
 ----
 
 It will bring up a Neo4j docker instance and take each project, build a docker image, start it and than executes a couple of requests against it.
