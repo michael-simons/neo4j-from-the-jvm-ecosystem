@@ -696,3 +696,4 @@ in a `GET /management/health/readiness`.
 
 Numbers taken on a MacBook Pro with 2.4Ghz Intel Core i9 and 32 GB Ram.
 Docker set to use at Max 8 "CPUs" and 8GiB memory in total.
+The numbers for `quarkus-ogm` reflect the state prior to commit 7e74c8e1c373cb72715a2e095b15f1c95b9d109f.
