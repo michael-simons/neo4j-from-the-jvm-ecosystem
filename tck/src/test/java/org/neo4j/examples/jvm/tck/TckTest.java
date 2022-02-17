@@ -19,13 +19,11 @@ import java.util.Optional;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.neo4j.driver.Driver;
 import org.neo4j.examples.jvm.tck.movies.Actor;
 import org.neo4j.examples.jvm.tck.movies.Movie;
-import org.neo4j.examples.jvm.tck.movies.MovieService;
 import org.neo4j.examples.jvm.tck.movies.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,15 +48,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * @author Michael J. Simons
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = "org.neo4j.migrations.enabled=true")
 @AutoConfigureRestDocs
 class TckTest {
-
-	@BeforeEach
-	void prepareDatabase(@Autowired MovieService movieService) {
-
-		movieService.prepareDatabase();
-	}
 
 	private final static int NUMBER_OF_INITIAL_MOVIES = 38;
 
