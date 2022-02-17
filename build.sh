@@ -46,6 +46,11 @@ for underTest in "${projects[@]}"; do
   then
     (cd $underTest && ./mvnw -DskipTests clean package -Dpackaging=docker -Dimage=neo4j-from-the-jvm/$underTest:latest)
 
+  elif [[ $underTest = quarkus-ogm-native ]]
+  then
+    underTest=${underTest%"-native"}
+    (cd $underTest && ./mvnw -DskipTests clean package -Dquarkus.container-image.build=true -Dquarkus.native.builder-image=quay.io/quarkus/ubi-quarkus-native-image:21.3-java17 -Dquarkus.container-image.group=neo4j-from-the-jvm -Dquarkus.container-image.tag=latest -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.name=$underTest-native)
+
   elif [[ $underTest = quarkus*native ]]
   then
     underTest=${underTest%"-native"}
