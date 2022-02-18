@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020 "Neo4j,"
+ * Copyright (c) 2002-2022 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,8 +18,6 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import javax.json.bind.annotation.JsonbCreator;
 import javax.json.bind.annotation.JsonbProperty;
 
@@ -31,7 +29,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
  * @author Michael J. Simons
  */
 @NodeEntity
-@RegisterForReflection
 public final class Person {
 
 	@Id @GeneratedValue

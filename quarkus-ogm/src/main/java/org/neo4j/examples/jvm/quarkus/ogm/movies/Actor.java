@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020 "Neo4j,"
+ * Copyright (c) 2002-2022 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,8 +18,6 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import org.neo4j.ogm.annotation.StartNode;
  * @author Michael J. Simons
  */
 @RelationshipEntity("ACTED_IN")
-@RegisterForReflection
 public final class Actor {
 
 	@Id @GeneratedValue

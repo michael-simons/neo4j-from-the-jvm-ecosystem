@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020 "Neo4j,"
+ * Copyright (c) 2002-2022 "Neo4j,"
  * Neo4j Sweden AB [http://neo4j.com]
  *
  * This file is part of Neo4j.
@@ -18,8 +18,6 @@
  */
 package org.neo4j.examples.jvm.quarkus.ogm.movies;
 
-import io.quarkus.runtime.annotations.RegisterForReflection;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,13 +27,11 @@ import org.neo4j.ogm.annotation.Id;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Property;
 import org.neo4j.ogm.annotation.Relationship;
-import org.neo4j.ogm.annotation.Transient;
 
 /**
  * @author Michael J. Simons
  */
 @NodeEntity
-@RegisterForReflection
 public final class Movie {
 
 	@Id
