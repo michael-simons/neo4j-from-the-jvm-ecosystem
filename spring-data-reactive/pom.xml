@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.1</version>
+		<version>2.7.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.neo4j.examples.neo4j_from_the_jvm_ecoysystem</groupId>
@@ -15,8 +15,8 @@
 	<description>Example how to connect to Neo4j and use the Spring Data Neo4j 6 in a reactive fashion.</description>
 
 	<properties>
-		<java.version>16</java.version>
-		<neo4j.version>4.2.8</neo4j.version>
+		<java.version>17</java.version>
+		<neo4j.version>4.4.13</neo4j.version>
 	</properties>
 
 	<dependencies>
