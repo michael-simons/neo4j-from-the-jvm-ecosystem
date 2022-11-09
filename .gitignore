@@ -6,6 +6,7 @@ var/
 /activemq-data/
 /nbproject/
 Thumbs.db
+\.*.swp
 
 ### IntelliJ IDEA ###
 .idea
