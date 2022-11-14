@@ -20,7 +20,6 @@ package org.neo4j.examples.jvm.spring.data.imperative.movies;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.annotation.PersistenceConstructor;
@@ -61,8 +60,8 @@ public final class Movie {
 	public Movie(String title, String description, List<Actor> actors, List<Person> directors) {
 		this.title = title;
 		this.description = description;
-		this.actors = actors == null ? List.of() : new ArrayList<>(actors);
-		this.directors = directors == null ? List.of() : new ArrayList<>(directors);
+		this.actors = actors == null ? new ArrayList<>() : new ArrayList<>(actors);
+		this.directors = directors == null ? new ArrayList<>() : new ArrayList<>(directors);
 	}
 
 	public String getTitle() {
@@ -74,11 +73,11 @@ public final class Movie {
 	}
 
 	public List<Actor> getActors() {
-		return Collections.unmodifiableList(this.actors);
+		return List.copyOf(this.actors);
 	}
 
 	public List<Person> getDirectors() {
-		return Collections.unmodifiableList(this.directors);
+		return List.copyOf(this.directors);
 	}
 
 	public Integer getReleased() {
