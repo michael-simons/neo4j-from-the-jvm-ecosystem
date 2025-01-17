@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.neo4j.examples.jvm.spring.data.imperative.Neo4jConfig;
-import org.neo4j.examples.jvm.spring.data.imperative.movies.PeopleRepository;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,7 @@ import org.springframework.test.context.DynamicPropertySource;
  */
 @DataNeo4jTest
 @Import(Neo4jConfig.class)
-class PeopleRepositoryTest {
+class RepositoryTests {
 	private static Neo4j embeddedDatabaseServer;
 
 	@DynamicPropertySource
@@ -48,13 +47,36 @@ class PeopleRepositoryTest {
 		assertThat(peopleRepository.getDetailsByName("foobar")).isEmpty();
 	}
 
+	@Test
+	void shouldUpdateDescription(@Autowired MovieRepository movieRepository) {
+
+		var description = movieRepository.updateDescription("The Matrix", "Whatever");
+		assertThat(description.description()).isEqualTo("Whatever");
+
+		var optionalMovie = movieRepository.findById("The Matrix");
+		assertThat(optionalMovie).hasValueSatisfying(m -> {
+			assertThat(m.getDescription()).isEqualTo(description.description());
+			assertThat(m.getActors()).isNotEmpty();
+		});
+	}
+
+	@Test
+	void shouldCreateNewMovie(@Autowired MovieRepository movieRepository) {
+
+		var movie = new Movie("Der frühe Vogel fängt den Wurm", "Ein Film über Jazz, Jazz, Jazz");
+		var newMovie = movieRepository.save(movie);
+
+		assertThat(newMovie.getVersion()).isNotNull();
+		assertThat(newMovie.getDescription()).isEqualTo(movie.getDescription());
+	}
+
 	@BeforeAll
 	static void initializeNeo4j() {
 
 		embeddedDatabaseServer = Neo4jBuilders.newInProcessBuilder()
 			.withDisabledServer()
 			.withFixture("""
-				CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
+				CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World',version:0})
 				CREATE (Keanu:Person {name:'Keanu Reeves', born:1964})
 				CREATE (Carrie:Person {name:'Carrie-Anne Moss', born:1967})
 				CREATE (Laurence:Person {name:'Laurence Fishburne', born:1961})
@@ -71,11 +93,11 @@ class PeopleRepositoryTest {
 				(LillyW)-[:DIRECTED]->(TheMatrix),
 				(LanaW)-[:DIRECTED]->(TheMatrix),
 				(JoelS)-[:PRODUCED]->(TheMatrix)
-				    
+				
 				CREATE (Emil:Person {name:"Emil Eifrem", born:1978})
 				CREATE (Emil)-[:ACTED_IN {roles:["Emil"]}]->(TheMatrix)
-				    
-				CREATE (TheMatrixReloaded:Movie {title:'The Matrix Reloaded', released:2003, tagline:'Free your mind'})
+				
+				CREATE (TheMatrixReloaded:Movie {title:'The Matrix Reloaded', released:2003, tagline:'Free your mind',version:0})
 				CREATE
 				(Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrixReloaded),
 				(Carrie)-[:ACTED_IN {roles:['Trinity']}]->(TheMatrixReloaded),
@@ -84,8 +106,8 @@ class PeopleRepositoryTest {
 				(LillyW)-[:DIRECTED]->(TheMatrixReloaded),
 				(LanaW)-[:DIRECTED]->(TheMatrixReloaded),
 				(JoelS)-[:PRODUCED]->(TheMatrixReloaded)
-				    
-				CREATE (TheMatrixRevolutions:Movie {title:'The Matrix Revolutions', released:2003, tagline:'Everything that has a beginning has an end'})
+				
+				CREATE (TheMatrixRevolutions:Movie {title:'The Matrix Revolutions', released:2003, tagline:'Everything that has a beginning has an end',version:0})
 				CREATE
 				(Keanu)-[:ACTED_IN {roles:['Neo']}]->(TheMatrixRevolutions),
 				(Carrie)-[:ACTED_IN {roles:['Trinity']}]->(TheMatrixRevolutions),
@@ -94,7 +116,7 @@ class PeopleRepositoryTest {
 				(Hugo)-[:ACTED_IN {roles:['Agent Smith']}]->(TheMatrixRevolutions),
 				(LillyW)-[:DIRECTED]->(TheMatrixRevolutions),
 				(LanaW)-[:DIRECTED]->(TheMatrixRevolutions),
-				(JoelS)-[:PRODUCED]->(TheMatrixRevolutions)				    
+				(JoelS)-[:PRODUCED]->(TheMatrixRevolutions)
 				"""
 			)
 			.build();

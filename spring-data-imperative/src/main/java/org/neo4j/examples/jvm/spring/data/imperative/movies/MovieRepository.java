@@ -23,5 +23,5 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 /**
  * @author Michael J. Simons
  */
-interface MovieRepository extends Neo4jRepository<Movie, String> {
+interface MovieRepository extends Neo4jRepository<Movie, String>, ExtMovieRepository {
 }

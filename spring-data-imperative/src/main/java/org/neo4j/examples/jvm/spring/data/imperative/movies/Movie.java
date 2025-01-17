@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
@@ -34,6 +35,9 @@ import org.springframework.data.neo4j.core.schema.Relationship.Direction;
  */
 @Node
 public final class Movie {
+
+	@Version
+	private final Long version;
 
 	@Id
 	private final String title;
@@ -50,6 +54,7 @@ public final class Movie {
 	private Integer released;
 
 	public Movie(String title, String description) {
+		this.version = null;
 		this.title = title;
 		this.description = description;
 		this.actors = new ArrayList<>();
@@ -57,11 +62,16 @@ public final class Movie {
 	}
 
 	@PersistenceCreator
-	public Movie(String title, String description, List<Actor> actors, List<Person> directors) {
+	Movie(Long version, String title, String description, List<Actor> actors, List<Person> directors) {
+		this.version = version;
 		this.title = title;
 		this.description = description;
 		this.actors = actors == null ? new ArrayList<>() : new ArrayList<>(actors);
 		this.directors = directors == null ? new ArrayList<>() : new ArrayList<>(directors);
+	}
+
+	public Long getVersion() {
+		return version;
 	}
 
 	public String getTitle() {
