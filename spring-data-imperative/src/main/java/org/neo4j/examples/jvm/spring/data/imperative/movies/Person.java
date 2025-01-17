@@ -18,7 +18,7 @@
  */
 package org.neo4j.examples.jvm.spring.data.imperative.movies;
 
-import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -32,14 +32,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 public final class Person {
 
 	@Id @GeneratedValue
-	private final Long id;
+	private final String id;
 
 	private final String name;
 
 	private Integer born;
 
-	@PersistenceConstructor
-	private Person(Long id, String name, Integer born) {
+	@PersistenceCreator
+	private Person(String id, String name, Integer born) {
 		this.id = id;
 		this.born = born;
 		this.name = name;
@@ -50,7 +50,7 @@ public final class Person {
 		this(null, name, born);
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 

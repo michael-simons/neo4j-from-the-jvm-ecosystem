@@ -36,7 +36,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class Actor {
 
 	@Id @GeneratedValue @JsonIgnore
-	private Long id;
+	private String id;
 
 	@TargetNode
 	@JsonIgnore

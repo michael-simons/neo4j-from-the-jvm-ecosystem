@@ -5,11 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.neo4j.examples.jvm.spring.data.imperative.Neo4jConfig;
 import org.neo4j.examples.jvm.spring.data.imperative.movies.PeopleRepository;
 import org.neo4j.harness.Neo4j;
 import org.neo4j.harness.Neo4jBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.neo4j.DataNeo4jTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
@@ -17,6 +19,7 @@ import org.springframework.test.context.DynamicPropertySource;
  * @author Michael J. Simons
  */
 @DataNeo4jTest
+@Import(Neo4jConfig.class)
 class PeopleRepositoryTest {
 	private static Neo4j embeddedDatabaseServer;
 
@@ -42,9 +45,7 @@ class PeopleRepositoryTest {
 			assertThat(personDetails.getRelated()).hasSize(5);
 		});
 
-		// The DTO projection returning an empty optional will fail atm due
-		// See https://jira.spring.io/browse/DATAGRAPH-1438
-		// assertThat(peopleRepository.getDetailsByName("foobar")).isEmpty();
+		assertThat(peopleRepository.getDetailsByName("foobar")).isEmpty();
 	}
 
 	@BeforeAll

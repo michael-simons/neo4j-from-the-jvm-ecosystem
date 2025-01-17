@@ -34,7 +34,7 @@ public class PeopleController {
 
 	private final PeopleRepository peopleRepository;
 
-	public PeopleController(PeopleRepository peopleRepository) {
+	PeopleController(PeopleRepository peopleRepository) {
 		this.peopleRepository = peopleRepository;
 	}
 
