@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.annotation.PersistenceConstructor;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Property;
@@ -57,7 +58,7 @@ public final class Movie {
 		this.directors = new ArrayList<>();
 	}
 
-	@PersistenceConstructor
+	@PersistenceCreator
 	public Movie(String title, String description, List<Actor> actors, List<Person> directors) {
 		this.title = title;
 		this.description = description;

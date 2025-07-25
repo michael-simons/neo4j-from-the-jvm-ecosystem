@@ -1,5 +1,7 @@
 package org.neo4j.examples.jvm.spring.data.reactive;
 
+import org.neo4j.cypherdsl.core.renderer.Configuration;
+import org.neo4j.cypherdsl.core.renderer.Dialect;
 import org.neo4j.driver.Driver;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,5 +19,10 @@ public class Application {
 	@Bean
 	ReactiveNeo4jTransactionManager reactiveTransactionManager(Driver driver, ReactiveDatabaseSelectionProvider databaseSelectionProvider) {
 		return new ReactiveNeo4jTransactionManager(driver, databaseSelectionProvider);
+	}
+
+	@Bean
+	Configuration cypherDSLConfiguration() {
+		return Configuration.newConfig().withDialect(Dialect.NEO4J_5).build();
 	}
 }
